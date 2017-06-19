@@ -52,6 +52,22 @@ function isLoggedIn() {
   return firebase.auth().currentUser != null;
 }
 
+function createGathering() {
+  // Insert into gatherings
+  
+  // Then make sure to insert into geofire!
+  
+}
+
+function searchByUser(user) {
+  //db.ref('gatherings').orderByChild('user').equalTo(user).once('value').then(d => console.table(d.val()))
+  // But use orderBy and equalTO
+}
+
+function searchByLocation() {
+  // Need to use geofire
+}
+
 function initMap(coords) {
   var map = new google.maps.Map(document.getElementById("map"), {
     zoom: 10,
