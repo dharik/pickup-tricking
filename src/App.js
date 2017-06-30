@@ -5,19 +5,30 @@ import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import darkBaseTheme from "material-ui/styles/baseThemes/darkBaseTheme";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 
-import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-  ToolbarTitle
-} from "material-ui/Toolbar";
+import { Toolbar, ToolbarGroup, ToolbarTitle } from "material-ui/Toolbar";
 import FlatButton from "material-ui/FlatButton";
 import Dialog from "material-ui/Dialog";
 import GoogleMapReact from "google-map-react";
 
+import firebase from "firebase";
+
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
+
+const apiKeyParams = {
+  key: "AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84"
+};
+
+firebase.initializeApp({
+  apiKey: "AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84",
+  authDomain: "pickup-tricking.firebaseapp.com",
+  databaseURL: "https://pickup-tricking.firebaseio.com",
+  projectId: "pickup-tricking",
+  storageBucket: "pickup-tricking.appspot.com",
+  messagingSenderId: "981593307874"
+});
+const db = firebase.database();
 
 class App extends Component {
   state = {
@@ -38,19 +49,21 @@ class App extends Component {
   componentDidMount() {
     if (window.navigator.geolocation) {
       window.navigator.geolocation.getCurrentPosition(p => {
+        console.log("Got current position");
         this.setState({
           longitude: p.coords.longitude,
           latitude: p.coords.latitude
         });
       });
     }
+
+    console.log("db request");
+    db
+      .ref("gatherings")
+      .once("value", v => console.log(v.val()), f => console.error(f));
   }
 
   render() {
-    const apiKeyParams = {
-      key: "AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84"
-    };
-
     return (
       <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
         <div style={{ height: "100%" }}>
@@ -68,7 +81,7 @@ class App extends Component {
             </ToolbarGroup>
           </Toolbar>
 
-          <div style={{ height: "100%" }}>
+          <div style={{ height: "90%" }}>
             <GoogleMapReact
               bootstrapURLKeys={apiKeyParams}
               center={{ lat: this.state.latitude, lng: this.state.longitude }}
