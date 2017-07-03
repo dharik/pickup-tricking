@@ -4,12 +4,11 @@ import injectTapEventPlugin from "react-tap-event-plugin";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import darkBaseTheme from "material-ui/styles/baseThemes/darkBaseTheme";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
-
-import { Toolbar, ToolbarGroup, ToolbarTitle } from "material-ui/Toolbar";
+import Navigation from "./Components/Navigation";
 import FlatButton from "material-ui/FlatButton";
 import Dialog from "material-ui/Dialog";
 import GoogleMapReact from "google-map-react";
-
+import HostGathering from './Components/HostGathering';
 import firebase from "firebase";
 
 // Needed for onTouchTap
@@ -32,25 +31,27 @@ const db = firebase.database();
 
 class App extends Component {
   state = {
-    hostModalOpen: false,
+    hostModalOpen: true,
+    center: [37.8610858,-122.2695871],
     latitude: 37.8610858,
     longitude: -122.2695871
   };
 
-  handleOpen = () => {
+  openHostModal = () => {
     console.log("opening");
     this.setState({ hostModalOpen: true });
   };
 
-  handleClose = () => {
+  closeHostModal = () => {
     this.setState({ hostModalOpen: false });
   };
 
   componentDidMount() {
     if (window.navigator.geolocation) {
       window.navigator.geolocation.getCurrentPosition(p => {
-        console.log("Got current position");
+        // Got geolocation
         this.setState({
+          center: [p.coords.latitude, p.coords.longitude],
           longitude: p.coords.longitude,
           latitude: p.coords.latitude
         });
@@ -67,27 +68,27 @@ class App extends Component {
     return (
       <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
         <div style={{ height: "100%" }}>
-          <Toolbar>
-            <ToolbarGroup firstChild={false}>
-              <ToolbarTitle text="Pickup Tricking" />
-            </ToolbarGroup>
-            <ToolbarGroup lastChild={true}>
-              <FlatButton label="About" onTouchTap={this.handleOpen} />
-              <FlatButton label="Manage Gatherings" />
-              <FlatButton
-                label="Host a gathering"
-                onTouchTap={this.handleOpen}
-              />
-            </ToolbarGroup>
-          </Toolbar>
+          <Navigation
+            openHostModalFn={this.openHostModal}
+          />
 
           <div style={{ height: "90%" }}>
             <GoogleMapReact
               bootstrapURLKeys={apiKeyParams}
-              center={{ lat: this.state.latitude, lng: this.state.longitude }}
+              center={this.state.center}
               defaultZoom={10}
             />
           </div>
+
+
+
+          <Dialog
+            open={this.state.hostModalOpen}
+            onRequestClose={this.closeHostModal}
+            autoScrollBodyContent={true}
+          >
+            <HostGathering center={{ lat: this.state.latitude, lng: this.state.longitude }}/>
+          </Dialog>
 
         </div>
       </MuiThemeProvider>
