@@ -6,7 +6,8 @@ import MenuItem from "material-ui/MenuItem";
 import DatePicker from "material-ui/DatePicker";
 import TimePicker from "material-ui/TimePicker";
 import TextField from "material-ui/TextField";
-import GoogleMapReact from "google-map-react";
+import { withGoogleMap, GoogleMap, Marker } from "react-google-maps";
+import SearchBox from "react-google-maps/lib/places/SearchBox";
 
 const weekdays = [
   "Sundays",
@@ -22,9 +23,37 @@ const apiKeyParams = {
   key: "AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84"
 };
 
-const SelectedLocation = ({text, lat, lng}) => {
-  return <div>{text}</div>;
-}
+const INPUT_STYLE = {
+  boxSizing: `border-box`,
+  MozBoxSizing: `border-box`,
+  border: `1px solid transparent`,
+  width: `240px`,
+  height: `32px`,
+  marginTop: `27px`,
+  padding: `0 12px`,
+  borderRadius: `1px`,
+  boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+  fontSize: `14px`,
+  outline: `none`,
+  textOverflow: `ellipses`
+};
+
+const GettingStartedGoogleMap = withGoogleMap(props => (
+  <GoogleMap
+    defaultZoom={10}
+    defaultCenter={props.defaultCenter}
+    onClick={props.onMapClick}
+  >
+    <SearchBox
+      ref={props.onSearchBoxMounted}
+      inputPlaceholder="Enter an address"
+      controlPosition={window.google.maps.ControlPosition.TOP_LEFT}
+      onPlacesChanged={props.onPlacesChanged}
+      inputStyle={INPUT_STYLE}
+    />
+    <Marker position={props.marker} key="Test" defaultAnimation={2} />
+  </GoogleMap>
+));
 
 class HostGathering extends Component {
   state = {
@@ -33,14 +62,12 @@ class HostGathering extends Component {
     frequency: "weekly",
     weekly_days: ["Saturdays", "Fridays"],
     selectedLocation: {
-      id: "A",
       lat: this.props.center.lat,
       lng: this.props.center.lng
     }
   };
 
   stepOne() {
-
     return (
       <div>
         <Checkbox
@@ -54,28 +81,35 @@ class HostGathering extends Component {
           label="Grass"
         />
 
-        <div style={{ width: "100%", height: "400px" }}>
-          <GoogleMapReact
-            bootstrapURLKeys={apiKeyParams}
-            center={this.props.center}
-            defaultZoom={10}
-            onClick={this.selectLocation}
-          >
-            <SelectedLocation  
-              text="Test"
-              lat={this.state.selectedLocation.lat}
-              lng={this.state.selectedLocation.lng}
-            />
-          </GoogleMapReact>
-        </div>
-        Host Gathering!
+        <GettingStartedGoogleMap
+          containerElement={<div style={{ width: "100%", height: "400px" }} />}
+          mapElement={<div style={{ height: `100%` }} />}
+          defaultCenter={this.props.center}
+          marker={this.state.selectedLocation}
+          onPlacesChanged={() => this.searchPlaces()}
+          onSearchBoxMounted={box => this._searchBox = box}
+          onMapClick={event =>
+            this.setState({
+              selectedLocation: {
+                lat: event.latLng.lat(),
+                lng: event.latLng.lng()
+              }
+            })}
+        />
       </div>
     );
+  }
+
+  searchPlaces() {
+    this._searchBox.getPlaces() && this.setState({
+      selectedLocation: this._searchBox.getPlaces()[0].geometry.location
+    });
   }
 
   selectLocation({ x, y, lat, lng, event }) {
     console.info("Selected", lat, lng);
   }
+  
   stepTwo() {
     return (
       <div>

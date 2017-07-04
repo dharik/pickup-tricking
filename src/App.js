@@ -7,7 +7,7 @@ import getMuiTheme from "material-ui/styles/getMuiTheme";
 import Navigation from "./Components/Navigation";
 import FlatButton from "material-ui/FlatButton";
 import Dialog from "material-ui/Dialog";
-import GoogleMapReact from "google-map-react";
+
 import HostGathering from './Components/HostGathering';
 import firebase from "firebase";
 
@@ -73,11 +73,8 @@ class App extends Component {
           />
 
           <div style={{ height: "90%" }}>
-            <GoogleMapReact
-              bootstrapURLKeys={apiKeyParams}
-              center={this.state.center}
-              defaultZoom={10}
-            />
+            
+
           </div>
 
 
