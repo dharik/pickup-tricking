@@ -64,9 +64,13 @@ class HostGathering extends Component {
       lat: this.props.center.lat,
       lng: this.props.center.lng
     },
+    selectedLocationHasChanged: false,
     date: null,
     time: null,
-    stepIndex: 0
+    stepIndex: 0,
+    title: '',
+    url: '',
+    description: ''
   };
 
   stepOne() {
@@ -97,6 +101,7 @@ class HostGathering extends Component {
           onSearchBoxMounted={box => (this._searchBox = box)}
           onMapClick={event =>
             this.setState({
+              selectedLocationHasChanged: true,
               selectedLocation: {
                 lat: event.latLng.lat(),
                 lng: event.latLng.lng()
@@ -111,6 +116,7 @@ class HostGathering extends Component {
     const places = this._searchBox.getPlaces();
     if (places && places.length > 0) {
       this.setState({
+        selectedLocationHasChanged: true,
         selectedLocation: this._searchBox.getPlaces()[0].geometry.location
       });
     }
@@ -142,14 +148,14 @@ class HostGathering extends Component {
             {this.state.frequency === 'once' &&
               <DatePicker
                 hintText="What date?"
-                onChange={(event, date) => this.setState({date})}
+                onChange={(event, date) => this.setState({ date })}
                 value={this.state.date}
               />}
             {this.state.frequency === 'once' &&
               <TimePicker
                 hintText="At what time?"
                 minutesStep={10}
-                onChange={(event, time) => this.setState({time})}
+                onChange={(event, time) => this.setState({ time })}
                 value={this.state.date}
               />}
             {this.state.frequency === 'weekly' &&
@@ -171,13 +177,16 @@ class HostGathering extends Component {
   }
 
   getMergedDate() {
-    if(this.state.date && this.state.time) {
-      return new Date(this.state.date.toDateString() + " " + this.state.time.toTimeString());
-    }
-    else if(this.state.date) {
+    if (this.state.date && this.state.time) {
+      return new Date(
+        this.state.date.toDateString() + ' ' + this.state.time.toTimeString()
+      );
+    } else if (this.state.date) {
       return this.state.date;
-    } else if(this.state.time) {
+    } else if (this.state.time) {
       return this.state.time;
+    } else {
+      return null;
     }
   }
 
@@ -187,12 +196,16 @@ class HostGathering extends Component {
         <TextField
           hintText="Give your gathering a title"
           floatingLabelText="Gathering name"
+          value={this.state.title}
+          onChange={(event, title) => this.setState({ title })}
           floatingLabelFixed={true}
         />
 
         <TextField
           floatingLabelFixed
           floatingLabelText="URL"
+          value={this.state.url}
+          onChange={(event, url) => this.setState({ url })}
           hintText="Facebook, Meetup.com, whatever"
         />
 
@@ -200,6 +213,8 @@ class HostGathering extends Component {
           multiLine
           floatingLabelText="Details"
           floatingLabelFixed
+          value={this.state.description}
+          onChange={(event, description) => this.setState({ description })}
           hintText="Be specific about when to meet, what to look for, what to bring, etc. Add information about how to contact you if necessary -- for example, a phone number or instagram handle"
         />
       </div>
@@ -280,7 +295,36 @@ class HostGathering extends Component {
   }
 
   finish() {
-    alert('done');
+    let errors = [];
+
+    if (this.state.frequency === 'once' && this.getMergedDate() == null) {
+      errors.push('Select a date & time');
+    }
+
+    if (
+      this.state.frequency === 'weekly' &&
+      this.state.weekly_days.length === 0
+    ) {
+      errors.push('Please select which days of the week you meet');
+    }
+
+    if (!this.state.selectedLocationHasChanged) {
+      errors.push('Select a location');
+    }
+
+    if (this.state.title === '') {
+      errors.push('Enter a title');
+    }
+
+    if (this.state.description.length < 7) {
+      errors.push('Enter something useful in the description');
+    }
+
+    if (errors.length > 0) {
+      alert(errors.join('\n'));
+    } else {
+      alert('all good');
+    }
   }
 
   menuItems() {
