@@ -1,27 +1,26 @@
-import React, { Component } from "react";
-import Checkbox from "material-ui/Checkbox";
-import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton";
-import SelectField from "material-ui/SelectField";
-import MenuItem from "material-ui/MenuItem";
-import DatePicker from "material-ui/DatePicker";
-import TimePicker from "material-ui/TimePicker";
-import TextField from "material-ui/TextField";
-import { withGoogleMap, GoogleMap, Marker } from "react-google-maps";
-import SearchBox from "react-google-maps/lib/places/SearchBox";
+import React, { Component } from 'react';
+import Checkbox from 'material-ui/Checkbox';
+import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import DatePicker from 'material-ui/DatePicker';
+import TimePicker from 'material-ui/TimePicker';
+import TextField from 'material-ui/TextField';
+import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
+import SearchBox from 'react-google-maps/lib/places/SearchBox';
+import { Step, Stepper, StepButton } from 'material-ui/Stepper';
+import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 
 const weekdays = [
-  "Sundays",
-  "Mondays",
-  "Tuesdays",
-  "Wednesdays",
-  "Thursdays",
-  "Fridays",
-  "Saturdays"
+  'Sundays',
+  'Mondays',
+  'Tuesdays',
+  'Wednesdays',
+  'Thursdays',
+  'Fridays',
+  'Saturdays'
 ];
-
-const apiKeyParams = {
-  key: "AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84"
-};
 
 const INPUT_STYLE = {
   boxSizing: `border-box`,
@@ -38,7 +37,7 @@ const INPUT_STYLE = {
   textOverflow: `ellipses`
 };
 
-const GettingStartedGoogleMap = withGoogleMap(props => (
+const HostGatheringMap = withGoogleMap(props =>
   <GoogleMap
     defaultZoom={10}
     defaultCenter={props.defaultCenter}
@@ -53,41 +52,49 @@ const GettingStartedGoogleMap = withGoogleMap(props => (
     />
     <Marker position={props.marker} key="Test" defaultAnimation={2} />
   </GoogleMap>
-));
+);
 
 class HostGathering extends Component {
   state = {
     isSpringFloor: false,
     isGrass: false,
-    frequency: "weekly",
-    weekly_days: ["Saturdays", "Fridays"],
+    frequency: 'weekly',
+    weekly_days: ['Saturdays', 'Fridays'],
     selectedLocation: {
       lat: this.props.center.lat,
       lng: this.props.center.lng
-    }
+    },
+    date: null,
+    time: null,
+    stepIndex: 0
   };
 
   stepOne() {
     return (
-      <div>
-        <Checkbox
-          checked={this.state.isSpringFloor}
-          onCheck={(event, b) => this.setState({ isSpringFloor: b })}
-          label="Spring floors"
-        />
-        <Checkbox
-          checked={this.state.isGrass}
-          onCheck={(event, b) => this.setState({ isGrass: b })}
-          label="Grass"
-        />
+      <div style={{ flexDirection: 'row', height: '400px', display: 'flex' }}>
+        <div style={{ flex: 1, order: 2, paddingLeft: '10px' }}>
+          <h4>About this location</h4>
+          <Checkbox
+            checked={this.state.isSpringFloor}
+            onCheck={(event, b) => this.setState({ isSpringFloor: b })}
+            label="Spring floors"
+          />
+          <Checkbox
+            checked={this.state.isGrass}
+            onCheck={(event, b) => this.setState({ isGrass: b })}
+            label="Grass"
+          />
+        </div>
 
-        <GettingStartedGoogleMap
-          containerElement={<div style={{ width: "100%", height: "400px" }} />}
-          mapElement={<div style={{ height: `100%` }} />}
+        <HostGatheringMap
+          containerElement={
+            <div style={{ flex: 2, height: '100%', order: 1 }} />
+          }
+          mapElement={<div style={{ height: '100%' }} />}
           defaultCenter={this.props.center}
           marker={this.state.selectedLocation}
           onPlacesChanged={() => this.searchPlaces()}
-          onSearchBoxMounted={box => this._searchBox = box}
+          onSearchBoxMounted={box => (this._searchBox = box)}
           onMapClick={event =>
             this.setState({
               selectedLocation: {
@@ -101,56 +108,82 @@ class HostGathering extends Component {
   }
 
   searchPlaces() {
-    this._searchBox.getPlaces() && this.setState({
-      selectedLocation: this._searchBox.getPlaces()[0].geometry.location
-    });
+    const places = this._searchBox.getPlaces();
+    if (places && places.length > 0) {
+      this.setState({
+        selectedLocation: this._searchBox.getPlaces()[0].geometry.location
+      });
+    }
   }
 
   selectLocation({ x, y, lat, lng, event }) {
-    console.info("Selected", lat, lng);
+    console.info('Selected', lat, lng);
   }
-  
+
   stepTwo() {
     return (
       <div>
-        How often does this gathering occur?
+        <h3>How often does this gathering occur?</h3>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ flex: 1 }}>
+            <RadioButtonGroup
+              name="frequency"
+              defaultSelected="weekly"
+              onChange={(event, newFrequency) =>
+                this.setState({ frequency: newFrequency })}
+            >
+              <RadioButton value="once" label="Just once" />
+              <RadioButton value="weekly" label="Weekly" />
+              <RadioButton value="other" label="Other" />
+            </RadioButtonGroup>
+          </div>
 
-        <RadioButtonGroup
-          name="frequency"
-          defaultSelected="weekly"
-          onChange={(event, newFrequency) =>
-            this.setState({ frequency: newFrequency })}
-        >
-          <RadioButton value="once" label="Just once" />
-          <RadioButton value="weekly" label="Weekly" />
-          <RadioButton value="other" label="Other" />
-        </RadioButtonGroup>
-
-        {this.state.frequency === "once" &&
-          <DatePicker hintText="What date?" />}
-        {this.state.frequency === "once" &&
-          <TimePicker hintText="At what time?" minutesStep={10} />}
-
-        {this.state.frequency === "weekly" &&
-          <SelectField
-            multiple={true}
-            hintText="Which days?"
-            value={this.state.weekly_days}
-            onChange={(event, index, values) =>
-              this.setState({ weekly_days: values })}
-          >
-            {this.menuItems(this.state.weekly_days)}
-          </SelectField>}
-
-        {this.state.frequency === "other" &&
-          "You can specify a schedule in the last step"}
+          <div style={{ flex: 2 }}>
+            {this.state.frequency === 'once' &&
+              <DatePicker
+                hintText="What date?"
+                onChange={(event, date) => this.setState({date})}
+                value={this.state.date}
+              />}
+            {this.state.frequency === 'once' &&
+              <TimePicker
+                hintText="At what time?"
+                minutesStep={10}
+                onChange={(event, time) => this.setState({time})}
+                value={this.state.date}
+              />}
+            {this.state.frequency === 'weekly' &&
+              <SelectField
+                multiple={true}
+                hintText="Which days?"
+                value={this.state.weekly_days}
+                onChange={(event, index, values) =>
+                  this.setState({ weekly_days: values })}
+              >
+                {this.menuItems(this.state.weekly_days)}
+              </SelectField>}
+            {this.state.frequency === 'other' &&
+              'You can specify a schedule in the next step'}
+          </div>
+        </div>
       </div>
     );
   }
 
+  getMergedDate() {
+    if(this.state.date && this.state.time) {
+      return new Date(this.state.date.toDateString() + " " + this.state.time.toTimeString());
+    }
+    else if(this.state.date) {
+      return this.state.date;
+    } else if(this.state.time) {
+      return this.state.time;
+    }
+  }
+
   stepThree() {
     return (
-      <div>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
         <TextField
           hintText="Give your gathering a title"
           floatingLabelText="Gathering name"
@@ -169,17 +202,89 @@ class HostGathering extends Component {
           floatingLabelFixed
           hintText="Be specific about when to meet, what to look for, what to bring, etc. Add information about how to contact you if necessary -- for example, a phone number or instagram handle"
         />
-
       </div>
     );
   }
 
+  getStepContent() {
+    switch (this.state.stepIndex) {
+      default:
+      case 0:
+        return this.stepOne();
+
+      case 1:
+        return this.stepTwo();
+
+      case 2:
+        return this.stepThree();
+    }
+  }
+
   render() {
-    return this.stepOne();
+    return (
+      <div>
+        <Stepper
+          activeStep={this.state.stepIndex}
+          linear={false}
+          orientation="horizontal"
+        >
+          <Step>
+            <StepButton onTouchTap={() => this.setState({ stepIndex: 0 })}>
+              Where
+            </StepButton>
+          </Step>
+          <Step>
+            <StepButton onTouchTap={() => this.setState({ stepIndex: 1 })}>
+              When
+            </StepButton>
+          </Step>
+          <Step>
+            <StepButton onTouchTap={() => this.setState({ stepIndex: 2 })}>
+              Details
+            </StepButton>
+          </Step>
+        </Stepper>
+        {this.getStepContent()}
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <FlatButton
+            label="Back"
+            disabled={this.state.stepIndex === 0}
+            onTouchTap={() => this.handlePrev()}
+            style={{ marginRight: 12 }}
+          />
+
+          <RaisedButton
+            label={this.state.stepIndex === 2 ? 'Finish' : 'Next'}
+            primary={true}
+            onTouchTap={() => this.handleNext()}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  handlePrev() {
+    this.setState({
+      stepIndex: this.state.stepIndex - 1
+    });
+  }
+  handleNext() {
+    if (this.state.stepIndex < 2) {
+      this.setState({
+        stepIndex: this.state.stepIndex + 1
+      });
+    } else {
+      this.finish();
+    }
+  }
+
+  finish() {
+    alert('done');
   }
 
   menuItems() {
-    return weekdays.map(day => (
+    return weekdays.map(day =>
       <MenuItem
         key={day}
         insetChildren={true}
@@ -187,7 +292,7 @@ class HostGathering extends Component {
         value={day}
         primaryText={day}
       />
-    ));
+    );
   }
 }
 

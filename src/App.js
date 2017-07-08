@@ -2,10 +2,9 @@ import React, { Component } from "react";
 import "./App.css";
 import injectTapEventPlugin from "react-tap-event-plugin";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
-import darkBaseTheme from "material-ui/styles/baseThemes/darkBaseTheme";
+import theme from "material-ui/styles/baseThemes/lightBaseTheme";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import Navigation from "./Components/Navigation";
-import FlatButton from "material-ui/FlatButton";
 import Dialog from "material-ui/Dialog";
 
 import HostGathering from './Components/HostGathering';
@@ -14,10 +13,6 @@ import firebase from "firebase";
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
-
-const apiKeyParams = {
-  key: "AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84"
-};
 
 firebase.initializeApp({
   apiKey: "AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84",
@@ -66,7 +61,7 @@ class App extends Component {
 
   render() {
     return (
-      <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
+      <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
         <div style={{ height: "100%" }}>
           <Navigation
             openHostModalFn={this.openHostModal}
