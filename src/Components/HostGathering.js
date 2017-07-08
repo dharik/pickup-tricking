@@ -11,6 +11,7 @@ import SearchBox from 'react-google-maps/lib/places/SearchBox';
 import { Step, Stepper, StepButton } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import { db } from '../firebase';
 
 const weekdays = [
   'Sundays',
@@ -296,8 +297,9 @@ class HostGathering extends Component {
 
   finish() {
     let errors = [];
+    const date = this.getMergedDate() ? this.getMergedDate().getTime() : null;
 
-    if (this.state.frequency === 'once' && this.getMergedDate() == null) {
+    if (this.state.frequency === 'once' && date == null) {
       errors.push('Select a date & time');
     }
 
@@ -323,7 +325,38 @@ class HostGathering extends Component {
     if (errors.length > 0) {
       alert(errors.join('\n'));
     } else {
-      alert('all good');
+      const {
+        isSpringFloor,
+        isGrass,
+        frequency,
+        weekly_days,
+        selectedLocation,
+        title,
+        url,
+        description
+      } = this.state;
+
+      db.ref('gatherings').push({
+        isSpringFloor,
+        isGrass,
+        frequency,
+        weekly_days,
+        selectedLocation,
+        title,
+        url,
+        description,
+        date
+      }, error => {
+        if (error) {
+          alert(
+            'Something went wrong! Please try again. If the problem persists, sorry!'
+          );
+          console.error(error);
+        } else {
+          // It worked
+          this.props.onAddedGathering();
+        }
+      });
     }
   }
 
