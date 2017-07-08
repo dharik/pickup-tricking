@@ -8,21 +8,15 @@ import Navigation from "./Components/Navigation";
 import Dialog from "material-ui/Dialog";
 
 import HostGathering from './Components/HostGathering';
-import firebase from "firebase";
+
+import {db} from './firebase';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 injectTapEventPlugin();
 
-firebase.initializeApp({
-  apiKey: "AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84",
-  authDomain: "pickup-tricking.firebaseapp.com",
-  databaseURL: "https://pickup-tricking.firebaseio.com",
-  projectId: "pickup-tricking",
-  storageBucket: "pickup-tricking.appspot.com",
-  messagingSenderId: "981593307874"
-});
-const db = firebase.database();
+
+
 
 class App extends Component {
   state = {
@@ -53,7 +47,6 @@ class App extends Component {
       });
     }
 
-    console.log("db request");
     db
       .ref("gatherings")
       .once("value", v => console.log(v.val()), f => console.error(f));
