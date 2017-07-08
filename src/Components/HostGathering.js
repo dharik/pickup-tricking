@@ -59,6 +59,8 @@ class HostGathering extends Component {
   state = {
     isSpringFloor: false,
     isGrass: false,
+    hasCrashPads: false,
+    isFree: false,
     frequency: 'weekly',
     weekly_days: ['Saturdays', 'Fridays'],
     selectedLocation: {
@@ -88,6 +90,16 @@ class HostGathering extends Component {
             checked={this.state.isGrass}
             onCheck={(event, b) => this.setState({ isGrass: b })}
             label="Grass"
+          />
+          <Checkbox
+            checked={this.state.hasCrashPads}
+            onCheck={(event, b) => this.setState({ hasCrashPads: b })}
+            label="Has crashpads"
+          />
+          <Checkbox
+            checked={this.state.isFree}
+            onCheck={(event, b) => this.setState({ isFree: b })}
+            label="Free (no fees to enter)"
           />
         </div>
 

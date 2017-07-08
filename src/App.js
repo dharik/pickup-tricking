@@ -59,7 +59,9 @@ class App extends Component {
         <div style={{ height: '100%' }}>
           <Navigation openHostModalFn={this.openHostModal} />
 
-          <div style={{ height: '90%' }} />
+          <div style={{ height: '90%' }}>
+            
+          </div>
 
           <Dialog
             open={this.state.hostModalOpen}
