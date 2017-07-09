@@ -340,6 +340,8 @@ class HostGathering extends Component {
       const {
         isSpringFloor,
         isGrass,
+        hasCrashPads,
+        isFree,
         frequency,
         weekly_days,
         selectedLocation,
@@ -351,6 +353,8 @@ class HostGathering extends Component {
       db.ref('gatherings').push({
         isSpringFloor,
         isGrass,
+        isFree,
+        hasCrashPads,
         frequency,
         weekly_days,
         selectedLocation,
