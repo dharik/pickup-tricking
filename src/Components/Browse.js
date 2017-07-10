@@ -41,6 +41,9 @@ const Browse = withGoogleMap(
                 <p>
                   {marker.description}
                 </p>
+                <p>
+                  <a href={`geo: <${marker.selectedLocation.lat}>, <${marker.selectedLocation.lng}>?q=${marker.selectedLocation.lat},${marker.selectedLocation.lng}(Gathering)`}>Open in maps</a>
+                </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                   {marker.isSpringFloor && <Chip>Spring floor</Chip>}
                   {marker.isGrass && <Chip>Grass</Chip>}

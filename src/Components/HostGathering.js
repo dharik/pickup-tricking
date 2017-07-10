@@ -207,7 +207,7 @@ class HostGathering extends Component {
           hintText="Be specific about when to meet, what to look for, what to bring, etc. Add information about how to contact you if necessary -- for example, a phone number or instagram handle"
         />
 
-        <h4>About this location</h4>
+        <h4>About the location</h4>
         <Checkbox
           checked={this.state.isSpringFloor}
           onCheck={(event, b) => this.setState({ isSpringFloor: b })}
