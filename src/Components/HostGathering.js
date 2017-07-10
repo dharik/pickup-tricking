@@ -283,7 +283,7 @@ class HostGathering extends Component {
             <RaisedButton
               label={this.state.stepIndex === 2 ? 'Finish' : 'Next'}
               primary={true}
-              onTouchTap={() => this.handleNext()}
+              onTouchTap={this.handleNext}
             />}
         </div>
       </div>
@@ -295,7 +295,9 @@ class HostGathering extends Component {
       stepIndex: this.state.stepIndex - 1
     });
   }
-  handleNext() {
+  handleNext = (event) => {
+    event.preventDefault();
+
     if (this.state.stepIndex < 2) {
       this.setState({
         stepIndex: this.state.stepIndex + 1
