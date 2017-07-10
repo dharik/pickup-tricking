@@ -8,7 +8,6 @@ import {
 } from 'react-google-maps';
 
 import Chip from 'material-ui/Chip';
-import FontIcon from 'material-ui/FontIcon';
 
 const Browse = withGoogleMap(
   ({ markers, center, onMarkerClick, onMarkerClose }) =>

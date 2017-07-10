@@ -44,13 +44,13 @@ const HostGatheringMap = withGoogleMap(props =>
     defaultCenter={props.defaultCenter}
     onClick={props.onMapClick}
   >
-    <SearchBox
+    {/*<SearchBox
       ref={props.onSearchBoxMounted}
       inputPlaceholder="Enter an address"
       controlPosition={window.google.maps.ControlPosition.TOP_LEFT}
       onPlacesChanged={props.onPlacesChanged}
       inputStyle={INPUT_STYLE}
-    />
+    />*/}
     <Marker position={props.marker} key="Test" defaultAnimation={2} />
   </GoogleMap>
 );
@@ -78,37 +78,11 @@ class HostGathering extends Component {
 
   stepOne() {
     return (
-      <div style={{ flexDirection: 'row', height: '400px', display: 'flex' }}>
-        <div style={{ flex: 1, order: 2, paddingLeft: '10px' }}>
-          <h4>About this location</h4>
-          <Checkbox
-            checked={this.state.isSpringFloor}
-            onCheck={(event, b) => this.setState({ isSpringFloor: b })}
-            label="Spring floors"
-          />
-          <Checkbox
-            checked={this.state.isGrass}
-            onCheck={(event, b) => this.setState({ isGrass: b })}
-            label="Grass"
-          />
-          <Checkbox
-            checked={this.state.hasCrashPads}
-            onCheck={(event, b) => this.setState({ hasCrashPads: b })}
-            label="Has crashpads"
-          />
-          <Checkbox
-            checked={this.state.isFree}
-            onCheck={(event, b) => this.setState({ isFree: b })}
-            label="Free (no fees to enter)"
-          />
-        </div>
-
+      <div style={{ height: '400px', width: '100%' }}>
         <HostGatheringMap
-          containerElement={
-            <div style={{ flex: 2, height: '100%', order: 1 }} />
-          }
-          mapElement={<div style={{ height: '100%' }} />}
-          defaultCenter={this.props.center}
+          containerElement={<div style={{ height: '100%', width: '100%' }} />}
+          mapElement={<div style={{ height: '100%', width: '100%' }} />}
+          defaultCenter={this.state.selectedLocation}
           marker={this.state.selectedLocation}
           onPlacesChanged={() => this.searchPlaces()}
           onSearchBoxMounted={box => (this._searchBox = box)}
@@ -143,11 +117,13 @@ class HostGathering extends Component {
     return (
       <div>
         <h3>How often does this gathering occur?</h3>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}
+        >
           <div style={{ flex: 1 }}>
             <RadioButtonGroup
               name="frequency"
-              defaultSelected="weekly"
+              defaultSelected={this.state.frequency}
               onChange={(event, newFrequency) =>
                 this.setState({ frequency: newFrequency })}
             >
@@ -230,6 +206,28 @@ class HostGathering extends Component {
           onChange={(event, description) => this.setState({ description })}
           hintText="Be specific about when to meet, what to look for, what to bring, etc. Add information about how to contact you if necessary -- for example, a phone number or instagram handle"
         />
+
+        <h4>About this location</h4>
+        <Checkbox
+          checked={this.state.isSpringFloor}
+          onCheck={(event, b) => this.setState({ isSpringFloor: b })}
+          label="Spring floors"
+        />
+        <Checkbox
+          checked={this.state.isGrass}
+          onCheck={(event, b) => this.setState({ isGrass: b })}
+          label="Grass"
+        />
+        <Checkbox
+          checked={this.state.hasCrashPads}
+          onCheck={(event, b) => this.setState({ hasCrashPads: b })}
+          label="Has crashpads"
+        />
+        <Checkbox
+          checked={this.state.isFree}
+          onCheck={(event, b) => this.setState({ isFree: b })}
+          label="Free (no fees to enter)"
+        />
       </div>
     );
   }
@@ -256,12 +254,12 @@ class HostGathering extends Component {
           linear={false}
           orientation="horizontal"
         >
-          <Step>
+          <Step completed={this.state.selectedLocationHasChanged}>
             <StepButton onTouchTap={() => this.setState({ stepIndex: 0 })}>
               Where
             </StepButton>
           </Step>
-          <Step>
+          <Step completed={!this.isStepTwoInvalid}>
             <StepButton onTouchTap={() => this.setState({ stepIndex: 1 })}>
               When
             </StepButton>
@@ -275,18 +273,18 @@ class HostGathering extends Component {
         {this.getStepContent()}
 
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <FlatButton
+          {/*<FlatButton
             label="Back"
             disabled={this.state.stepIndex === 0}
             onTouchTap={() => this.handlePrev()}
-            style={{ marginRight: 12 }}
-          />
+          />*/}
 
-          <RaisedButton
-            label={this.state.stepIndex === 2 ? 'Finish' : 'Next'}
-            primary={true}
-            onTouchTap={() => this.handleNext()}
-          />
+          {this.state.stepIndex === 2 &&
+            <RaisedButton
+              label={this.state.stepIndex === 2 ? 'Finish' : 'Next'}
+              primary={true}
+              onTouchTap={() => this.handleNext()}
+            />}
         </div>
       </div>
     );
@@ -305,6 +303,14 @@ class HostGathering extends Component {
     } else {
       this.finish();
     }
+  }
+
+  get isStepTwoInvalid() {
+    const date = this.getMergedDate() ? this.getMergedDate().getTime() : null;
+    return (
+      (this.state.frequency === 'once' && date == null) ||
+      (this.state.frequency === 'weekly' && this.state.weekly_days.length === 0)
+    );
   }
 
   finish() {
