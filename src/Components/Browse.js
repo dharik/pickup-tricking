@@ -23,7 +23,7 @@ const Browse = withGoogleMap(
             <InfoWindow onCloseClick={() => onMarkerClose(marker)}>
               <div>
                 {marker.url
-                  ? <a href={marker.url} target="_blank">
+                  ? <a href={marker.url} target="_blank" rel="noopener noreferrer">
                       <h4>
                         {marker.title}
                       </h4>

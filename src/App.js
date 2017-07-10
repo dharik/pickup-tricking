@@ -11,6 +11,9 @@ import HostGathering from './Components/HostGathering';
 import Browse from './Components/Browse';
 
 import { db } from './firebase';
+import Drawer from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
+import Snackbar from 'material-ui/Snackbar';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -19,13 +22,14 @@ injectTapEventPlugin();
 class App extends Component {
   state = {
     hostModalOpen: false,
-    center: [37.8610858, -122.2695871],
-    latitude: 37.8610858,
-    longitude: -122.2695871,
-    gatherings: [{}]
+    center: { lat: 31.8610858, lng: -122.2695871 },
+    gatherings: [{}],
+    drawerOpen: false,
+    requestingLocation: true
   };
 
   openHostModal = () => {
+    this.closeDrawer();
     this.setState({ hostModalOpen: true });
   };
 
@@ -56,9 +60,8 @@ class App extends Component {
       window.navigator.geolocation.getCurrentPosition(p => {
         // Got geolocation
         this.setState({
-          center: [p.coords.latitude, p.coords.longitude],
-          longitude: p.coords.longitude,
-          latitude: p.coords.latitude
+          center: { lat: p.coords.latitude, lng: p.coords.longitude },
+          requestingLocation: false
         });
       });
     }
@@ -73,6 +76,7 @@ class App extends Component {
 
   handleMarkerClick = targetMarker => {
     this.setState({
+      center: targetMarker.selectedLocation,
       gatherings: this.state.gatherings.map(marker => {
         if (marker === targetMarker) {
           return {
@@ -80,7 +84,10 @@ class App extends Component {
             showInfo: true
           };
         }
-        return marker;
+        return {
+          ...marker,
+          showInfo: false
+        };
       })
     });
   };
@@ -99,20 +106,45 @@ class App extends Component {
     });
   };
 
+  invertDrawerOpen = () => {
+    this.setState({
+      drawerOpen: !this.state.drawerOpen
+    });
+  };
+  closeDrawer = () => {
+    this.setState({
+      drawerOpen: false
+    });
+  };
+
+  closeRequestionLocation = () => {
+    this.setState({
+      requestingLocation: false
+    });
+  }
+
   render() {
     return (
       <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-        <div style={{ height: '100%' }}>
-          <Navigation openHostModalFn={this.openHostModal} />
+        <div
+          style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+        >
+          <Navigation
+            openHostModalFn={this.openHostModal}
+            onMenuClick={this.invertDrawerOpen}
+          />
 
-          <div style={{ height: '90%' }}>
+          <div style={{ flex: 1 }}>
             <Browse
-              center={{ lat: this.state.latitude, lng: this.state.longitude }}
+              center={this.state.center}
               markers={this.state.gatherings}
               onMarkerClick={this.handleMarkerClick}
               onMarkerClose={this.handleMarkerClose}
-              containerElement={<div style={{ height: '100%' }} />}
+              containerElement={
+                <div style={{ height: '100%', width: '100%' }} />
+              }
               mapElement={<div style={{ height: '100%', width: '100%' }} />}
+              onMapClick={this.closeDrawer}
             />
           </div>
 
@@ -120,12 +152,29 @@ class App extends Component {
             open={this.state.hostModalOpen}
             onRequestClose={this.closeHostModal}
             autoScrollBodyContent={true}
+            repositionOnUpdate={false}
           >
             <HostGathering
-              center={{ lat: this.state.latitude, lng: this.state.longitude }}
+              center={this.state.center}
               onAddedGathering={() => this.onAddedGathering()}
             />
           </Dialog>
+
+          <Drawer open={this.state.drawerOpen}>
+            <MenuItem onTouchTap={this.closeDrawer}>Browse gatherings</MenuItem>
+            <MenuItem onTouchTap={this.openHostModal}>
+              Add/host a gathering
+            </MenuItem>
+            <MenuItem>Manage my gatherings</MenuItem>
+            <MenuItem>About</MenuItem>
+          </Drawer>
+
+          <Snackbar
+            open={this.state.requestingLocation}
+            message="Requesting your location..."
+            autoHideDuration={5000}
+            onRequestClose={this.closeRequestionLocation}
+          />
         </div>
       </MuiThemeProvider>
     );
