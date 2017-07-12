@@ -1,6 +1,6 @@
 import firebase from "firebase";
 
-firebase.initializeApp({
+const fb = firebase.initializeApp({
   apiKey: "AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84",
   authDomain: "pickup-tricking.firebaseapp.com",
   databaseURL: "https://pickup-tricking.firebaseio.com",
@@ -9,4 +9,5 @@ firebase.initializeApp({
   messagingSenderId: "981593307874"
 });
 
-export const db = firebase.database();
+export const auth = fb.auth();
+export const db = fb.database();

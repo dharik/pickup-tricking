@@ -11,7 +11,8 @@ import SearchBox from 'react-google-maps/lib/places/SearchBox';
 import { Step, Stepper, StepButton } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
+import SocialLogins from '../lib/SocialLogins';
 
 const weekdays = [
   'Sundays',
@@ -249,6 +250,7 @@ class HostGathering extends Component {
   render() {
     return (
       <div>
+        <SocialLogins fireRef={auth} providers={['google', 'facebook', 'phone']}/>
         <Stepper
           activeStep={this.state.stepIndex}
           linear={false}
