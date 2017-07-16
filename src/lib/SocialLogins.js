@@ -80,13 +80,13 @@ class ReactFirebaseSocialLogins extends React.Component {
 ReactFirebaseSocialLogins.displayName = 'ReactFirebaseSocialLogins';
 
 // Uncomment properties you need
-ReactFirebaseSocialLogins.propTypes = {
-  fireRef: React.PropTypes.object.isRequired,
-  providers: React.PropTypes.arrayOf(React.PropTypes.string),
-  textFn: React.PropTypes.func,
-  errorHandler: React.PropTypes.func,
-  btnProps: React.PropTypes.object
-};
+// ReactFirebaseSocialLogins.propTypes = {
+//   fireRef: React.PropTypes.object.isRequired,
+//   providers: React.PropTypes.arrayOf(React.PropTypes.string),
+//   textFn: React.PropTypes.func,
+//   errorHandler: React.PropTypes.func,
+//   btnProps: React.PropTypes.object
+// };
 
 ReactFirebaseSocialLogins.defaultProps = {
   providers: ['google', 'facebook', 'twitter', 'github'],
