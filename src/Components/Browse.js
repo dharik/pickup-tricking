@@ -86,9 +86,8 @@ const BrowseMap = withGoogleMap(
 
 class Browse extends Component {
   state = {
-    center: { lat: 31.8610858, lng: -122.2695871 },
+    center: this.props.center,
     gatherings: [{}],
-    requestingLocation: true,
     mapHasBeenDragged: false
   };
 

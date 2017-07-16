@@ -8,6 +8,7 @@ import Navigation from './Components/Navigation';
 
 import HostGathering from './Components/HostGathering';
 import Browse from './Components/Browse';
+import Login from './Components/Login';
 import Snackbar from 'material-ui/Snackbar';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -22,6 +23,7 @@ class App extends Component {
   state = {
     center: { lat: 31.8610858, lng: -122.2695871 },
     userCenter: { lat: 31.8610858, lng: -122.2695871 },
+    userCenterChanged: false,
     drawerOpen: false,
     requestingLocation: true
   };
@@ -83,7 +85,8 @@ class App extends Component {
 
   onBoundsChanged = newCenter => {
     this.setState({
-      userCenter: newCenter
+      userCenter: newCenter,
+      userCenterChanged: true
     });
   };
 
@@ -109,18 +112,19 @@ class App extends Component {
               <div style={{ flex: 1 }}>
                 <Switch>
                   <Route path="/about" component={About} />
+                  <Route path="/login" component={Login} />
                   <Route
                     path="/host"
                     render={() =>
                       <HostGathering
-                        center={this.state.center}
+                        center={this.state.userCenterChanged ? this.state.userCenter : this.state.center}
                         onAddedGathering={() => this.onAddedGathering()}
                       />}
                   />
                   <Route
                     render={() =>
                       <Browse
-                        center={this.state.center}
+                        center={this.state.userCenterChanged ? this.state.userCenter : this.state.center}
                         onMapClick={this.closeDrawer}
                         onBoundsChanged={this.onBoundsChanged}
                       />}

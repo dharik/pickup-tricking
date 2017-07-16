@@ -12,7 +12,8 @@ import { Step, Stepper, StepButton } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import { db, auth } from '../firebase';
-import SocialLogins from '../lib/SocialLogins';
+import { Prompt } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 const weekdays = [
   'Sundays',
@@ -40,11 +41,7 @@ const INPUT_STYLE = {
 };
 
 const HostGatheringMap = withGoogleMap(props =>
-  <GoogleMap
-    defaultZoom={10}
-    defaultCenter={props.defaultCenter}
-    onClick={props.onMapClick}
-  >
+  <GoogleMap defaultZoom={10} center={props.center} onClick={props.onMapClick}>
     {/*<SearchBox
       ref={props.onSearchBoxMounted}
       inputPlaceholder="Enter an address"
@@ -83,8 +80,16 @@ class HostGathering extends Component {
         <HostGatheringMap
           containerElement={<div style={{ height: '100%', width: '100%' }} />}
           mapElement={<div style={{ height: '100%', width: '100%' }} />}
-          defaultCenter={this.state.selectedLocation}
-          marker={this.state.selectedLocation}
+          center={
+            this.state.selectedLocationHasChanged
+              ? this.state.selectedLocation
+              : this.props.center
+          }
+          marker={
+            this.state.selectedLocationHasChanged
+              ? this.state.selectedLocation
+              : this.props.center
+          }
           onPlacesChanged={() => this.searchPlaces()}
           onSearchBoxMounted={box => (this._searchBox = box)}
           onMapClick={event =>
@@ -248,9 +253,12 @@ class HostGathering extends Component {
   }
 
   render() {
+    if(!auth.currentUser) {
+      return <Redirect to="/login" />;
+    }
+
     return (
       <div>
-        <SocialLogins fireRef={auth} providers={['google', 'facebook', 'phone']}/>
         <Stepper
           activeStep={this.state.stepIndex}
           linear={false}
@@ -288,6 +296,11 @@ class HostGathering extends Component {
               onTouchTap={this.handleNext}
             />}
         </div>
+
+        <Prompt
+          when={this.state.selectedLocationHasChanged}
+          message="Are you sure you want to navigate away from this page? You will lose any form progress"
+        />
       </div>
     );
   }
@@ -297,7 +310,7 @@ class HostGathering extends Component {
       stepIndex: this.state.stepIndex - 1
     });
   }
-  handleNext = (event) => {
+  handleNext = event => {
     event.preventDefault();
 
     if (this.state.stepIndex < 2) {
@@ -307,7 +320,7 @@ class HostGathering extends Component {
     } else {
       this.finish();
     }
-  }
+  };
 
   get isStepTwoInvalid() {
     const date = this.getMergedDate() ? this.getMergedDate().getTime() : null;
