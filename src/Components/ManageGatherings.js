@@ -32,8 +32,8 @@ class ManageGatherings extends Component {
 
   render() {
     return (
-      <div>
-        <h1>My spots</h1>
+      <div style={{padding: '5px'}}>
+        <h3>Spots I've added</h3>
         <div>
           {this.state.gatherings.map((gathering,index) => {
             let frequencyText = '';
@@ -54,7 +54,7 @@ class ManageGatherings extends Component {
                 {gathering.description}
               </CardText>
               <CardMedia expandable={true}>
-                <img src={`https://maps.googleapis.com/maps/api/staticmap?center=${gathering.selectedLocation.lat}, ${gathering.selectedLocation.lng}&zoom=13&size=800x250&maptype=roadmap&markers=color:red%7Clabel:Spot%7C${gathering.selectedLocation.lat}, ${gathering.selectedLocation.lng}
+                <img src={`https://maps.googleapis.com/maps/api/staticmap?center=${gathering.selectedLocation.lat}, ${gathering.selectedLocation.lng}&zoom=14&size=800x250&maptype=roadmap&markers=color:red%7Clabel:Spot%7C${gathering.selectedLocation.lat}, ${gathering.selectedLocation.lng}
 &key=AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84`} />
               </CardMedia>
               <CardActions>

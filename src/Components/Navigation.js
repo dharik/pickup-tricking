@@ -35,10 +35,10 @@ const Navigation = ({
 
       <Drawer open={drawerOpen}>
         <Link to="/browse">
-          <MenuItem onTouchTap={() => onCloseDrawer()}>Browse spots</MenuItem>
+          <MenuItem onTouchTap={() => onCloseDrawer()}>Find tricking spots</MenuItem>
         </Link>
         <Link to="/host">
-          <MenuItem onTouchTap={() => onCloseDrawer()}>Add a spot</MenuItem>
+          <MenuItem onTouchTap={() => onCloseDrawer()}>Add a spot to the map</MenuItem>
         </Link>
         <Link to="/mine">
           <MenuItem onTouchTap={() => onCloseDrawer()}>

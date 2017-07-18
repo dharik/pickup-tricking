@@ -121,7 +121,7 @@ class HostGathering extends Component {
 
   stepTwo() {
     return (
-      <div>
+      <div style={{padding: '5px'}}>
         <h3>How often does this gathering occur?</h3>
         <div
           style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}
@@ -187,7 +187,7 @@ class HostGathering extends Component {
 
   stepThree() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', padding: '5px' }}>
         <TextField
           hintText="Give your gathering a title"
           floatingLabelText="Gathering name"
