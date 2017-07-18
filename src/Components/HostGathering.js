@@ -253,8 +253,8 @@ class HostGathering extends Component {
   }
 
   render() {
-    if(!auth.currentUser) {
-      return <Redirect to="/login" />;
+    if (!auth.currentUser) {
+      return <Redirect to={{ pathname: '/login', state: { from: '/host' } }} />;
     }
 
     return (
@@ -372,6 +372,7 @@ class HostGathering extends Component {
         url,
         description
       } = this.state;
+      const uid = auth.currentUser.uid;
 
       db.ref('gatherings').push({
         isSpringFloor,
@@ -384,7 +385,8 @@ class HostGathering extends Component {
         title,
         url,
         description,
-        date
+        date,
+        uid
       }, error => {
         if (error) {
           alert(

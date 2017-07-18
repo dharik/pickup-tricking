@@ -4,18 +4,20 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import { auth } from '../firebase';
 
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 const Navigation = ({
   openHostModalFn,
   onMenuClick,
   match,
   drawerOpen,
-  onCloseDrawer
+  onCloseDrawer,
+  history
 }) => {
   const signOut = () => {
     auth.signOut();
     onCloseDrawer();
+    history.push('/');
   }
   return (
     <div>
@@ -32,7 +34,7 @@ const Navigation = ({
         <Link to="/host">
           <MenuItem onTouchTap={() => onCloseDrawer()}>Add a spot</MenuItem>
         </Link>
-        <Link to="/manage">
+        <Link to="/mine">
           <MenuItem onTouchTap={() => onCloseDrawer()}>
             Update my spots
           </MenuItem>
@@ -49,4 +51,4 @@ const Navigation = ({
   );
 };
 
-export default Navigation;
+export default withRouter(Navigation);

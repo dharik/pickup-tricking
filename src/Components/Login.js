@@ -7,9 +7,7 @@ class Login extends Component {
     super(props);
     auth.onAuthStateChanged(next => {
       if(next) {
-        console.log('login worked');
-      } else {
-        console.error('failed to login');
+        this.props.history.push(this.props.location.state.from);
       }
     });
   }

@@ -7,6 +7,8 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import Navigation from './Components/Navigation';
 
 import HostGathering from './Components/HostGathering';
+import ManageGatherings from './Components/ManageGatherings';
+
 import Browse from './Components/Browse';
 import Login from './Components/Login';
 import Snackbar from 'material-ui/Snackbar';
@@ -121,6 +123,7 @@ class App extends Component {
                         onAddedGathering={() => this.onAddedGathering()}
                       />}
                   />
+                  <Route path="/mine" component={ManageGatherings} />
                   <Route
                     render={() =>
                       <Browse
