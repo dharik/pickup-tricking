@@ -18,7 +18,13 @@ const Navigation = ({
     auth.signOut();
     onCloseDrawer();
     history.push('/');
-  }
+  };
+
+  let provider =
+    auth.currentUser &&
+    auth.currentUser.providerData &&
+    auth.currentUser.providerData[0].providerId.replace('.com', '');
+
   return (
     <div>
       <AppBar
@@ -45,7 +51,9 @@ const Navigation = ({
           </MenuItem>
         </Link>
         {auth.currentUser &&
-          <MenuItem onTouchTap={signOut}>Logout</MenuItem>}
+          <MenuItem onTouchTap={signOut}>
+            Logout {provider ? '(' + provider + ')' : null}
+          </MenuItem>}
       </Drawer>
     </div>
   );

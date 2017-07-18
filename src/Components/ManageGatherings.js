@@ -1,16 +1,68 @@
 import React, { Component } from 'react';
 import { db, auth } from '../firebase';
 import { Redirect } from 'react-router-dom';
+import { Card, CardActions, CardHeader, CardText, CardMedia, CardTitle } from 'material-ui/Card';
+import RaisedButton from 'material-ui/RaisedButton';
 
 class ManageGatherings extends Component {
-  
+  state = {
+    gatherings: []
+  };
+
+  componentDidMount() {
+    auth.onAuthStateChanged(next => {
+      if (next) {
+        db
+          .ref('gatherings')
+          .orderByChild('uid')
+          .equalTo(auth.currentUser.uid)
+          .once('value')
+          .then(snapshot => {
+            let gatherings = [];
+            snapshot.forEach(item => {
+              gatherings.push(item.val())
+            });
+            this.setState({ gatherings });
+          });
+      } else {
+        this.props.history.push('/login', { from: '/mine' });
+      }
+    });
+  }
+
   render() {
-    if(!auth.currentUser) {
-      this.props.history.push('/login', { from: '/mine' });
-    }
     return (
       <div>
-        Manage
+        <h1>My spots</h1>
+        <div>
+          {this.state.gatherings.map((gathering,index) => {
+            let frequencyText = '';
+            if( gathering.frequency === 'once' ) {
+              frequencyText = 'Occurs once on ' + new Date(gathering.date).toLocaleDateString();
+            } else if (gathering.frequency === 'weekly') {
+              frequencyText = 'Occurs weekly on ' + gathering.weekly_days.join(', ');
+            }
+
+            return <Card key={index}>
+              <CardHeader
+                title={gathering.title}
+                subtitle={frequencyText}
+                actAsExpander={true}
+                showExpandableButton={true}
+              />
+              <CardText>
+                {gathering.description}
+              </CardText>
+              <CardMedia expandable={true}>
+                <img src={`https://maps.googleapis.com/maps/api/staticmap?center=${gathering.selectedLocation.lat}, ${gathering.selectedLocation.lng}&zoom=13&size=800x250&maptype=roadmap&markers=color:red%7Clabel:Spot%7C${gathering.selectedLocation.lat}, ${gathering.selectedLocation.lng}
+&key=AIzaSyBUoa5u8pUE5UayWD-QL7Ff8gNQUSaVU84`} />
+              </CardMedia>
+              <CardActions>
+                <RaisedButton label="Delete" />
+              </CardActions>
+            </Card>
+          })}
+        </div>
       </div>
     );
   }

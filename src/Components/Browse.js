@@ -64,7 +64,7 @@ const BrowseMap = withGoogleMap(
   }) =>
     <GoogleMap
       ref={onMapMounted}
-      defaultZoom={11}
+      defaultZoom={5}
       center={center}
       onClick={onMapClick}
       onDragEnd={onBoundsChanged}
