@@ -63,11 +63,6 @@ class App extends Component {
     }
   }
 
-  onAddedGathering() {
-    this.closeHostModal();
-    this.gatherData();
-  }
-
   invertDrawerOpen = () => {
     this.setState({
       drawerOpen: !this.state.drawerOpen
@@ -120,7 +115,6 @@ class App extends Component {
                     render={() =>
                       <HostGathering
                         center={this.state.userCenterChanged ? this.state.userCenter : this.state.center}
-                        onAddedGathering={() => this.onAddedGathering()}
                       />}
                   />
                   <Route path="/mine" component={ManageGatherings} />

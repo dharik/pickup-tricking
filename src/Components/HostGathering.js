@@ -13,7 +13,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import { db, auth } from '../firebase';
 import { Prompt } from 'react-router-dom';
-import { Redirect } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
 
 const weekdays = [
   'Sundays',
@@ -71,7 +71,8 @@ class HostGathering extends Component {
     stepIndex: 0,
     title: '',
     url: '',
-    description: ''
+    description: '',
+    done: false
   };
 
   stepOne() {
@@ -257,6 +258,13 @@ class HostGathering extends Component {
       return <Redirect to={{ pathname: '/login', state: { from: '/host' } }} />;
     }
 
+    if(this.state.done) {
+      return <div style={{padding: '5px'}}>
+        <h2>Success!</h2>
+        <Redirect to="/browse" />
+      </div>
+    }
+
     return (
       <div>
         <Stepper
@@ -298,7 +306,7 @@ class HostGathering extends Component {
         </div>
 
         <Prompt
-          when={this.state.selectedLocationHasChanged}
+          when={this.state.selectedLocationHasChanged && !this.state.done}
           message="Are you sure you want to navigate away from this page? You will lose any form progress"
         />
       </div>
@@ -386,7 +394,8 @@ class HostGathering extends Component {
         url,
         description,
         date,
-        uid
+        uid,
+        created: new Date().getTime()
       }, error => {
         if (error) {
           alert(
@@ -395,7 +404,9 @@ class HostGathering extends Component {
           console.error(error);
         } else {
           // It worked
-          this.props.onAddedGathering();
+          this.setState({
+            done: true
+          })
         }
       });
     }
@@ -414,4 +425,4 @@ class HostGathering extends Component {
   }
 }
 
-export default HostGathering;
+export default withRouter(HostGathering);
