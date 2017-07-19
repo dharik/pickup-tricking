@@ -6,11 +6,35 @@ import {
   Marker,
   InfoWindow
 } from 'react-google-maps';
+import { Card, CardActions, CardHeader, CardText, CardMedia, CardTitle } from 'material-ui/Card';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import Chip from 'material-ui/Chip';
 import { db } from '../firebase';
 
 const gatheringInfo = ({ marker }) => {
+  let frequencyText = '';
+  if( marker.frequency === 'once' ) {
+    const d = new Date(marker.date);
+    frequencyText = `Occurs once on ${d.toLocaleString()}`;
+  } else if (marker.frequency === 'weekly') {
+    frequencyText = 'Occurs on ' + marker.weekly_days.join(', ');
+  }
+  // return (
+  //   <Card>
+  //     <CardHeader
+  //       title={marker.title}
+  //       subtitle={frequencyText}
+  //     />
+  //     <CardText>
+  //       {marker.description}
+  //     </CardText>
+  //     <CardActions>
+  //       <RaisedButton label="Website" />
+  //       <RaisedButton label="Open in maps" />
+  //     </CardActions>
+  //   </Card>
+  // )
   return (
     <div>
       {marker.url
