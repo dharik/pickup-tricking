@@ -205,12 +205,15 @@ class HostGathering extends Component {
           hintText="Facebook, Meetup.com, whatever"
         />
 
+        <br />
+
         <TextField
           multiLine
           floatingLabelText="Details"
           floatingLabelFixed
           value={this.state.description}
           onChange={(event, description) => this.setState({ description })}
+          rows={4}
           hintText="Be specific about when to meet, what to look for, what to bring, etc. Add information about how to contact you if necessary -- for example, a phone number or instagram handle"
         />
 
