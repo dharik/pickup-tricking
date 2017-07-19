@@ -11,22 +11,29 @@ class Login extends Component {
     super(props);
     auth.onAuthStateChanged(next => {
       if (next) {
-        if (!this.props.location) {
-          this.props.history.push('/host');
-        }
-
-        this.props.history.push(this.props.location.state.from);
+        this.redirectBack();
       }
     });
   }
 
+  redirectBack = () => {
+    try {
+      this.props.history.push(this.props.location.state.from);
+    } catch(e) {
+      this.props.history.push('/host');
+    }
+  };
+
   componentDidMount() {
     var uiConfig = {
       signInFlow: 'popup',
-      signInSuccess: function(currentUser, credential, redirectUrl) {
-        return false;
+      callbacks: {
+        signInSuccess: (currentUser, credential, redirectUrl) => {
+          this.redirectBack();
+          return false;
+        }
       },
-      signInSuccessUrl: (this.props.location && this.props.location.state && this.props.location.state.from) || '/',
+      //signInSuccessUrl: (this.props.location && this.props.location.state && this.props.location.state.from) || '/',
       signInOptions: [
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.FacebookAuthProvider.PROVIDER_ID,
@@ -43,10 +50,18 @@ class Login extends Component {
   }
 
   render() {
-    return <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-      <h4>Sign in required</h4>
-      <div id="firebaseui-auth" />
-    </div>
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}
+      >
+        <h4>Sign in required</h4>
+        <div id="firebaseui-auth" />
+      </div>
+    );
   }
 }
 
