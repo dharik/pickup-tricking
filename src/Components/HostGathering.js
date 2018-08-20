@@ -276,17 +276,17 @@ class HostGathering extends Component {
           orientation="horizontal"
         >
           <Step completed={this.state.selectedLocationHasChanged}>
-            <StepButton onTouchTap={() => this.setState({ stepIndex: 0 })}>
+            <StepButton onClick={() => this.setState({ stepIndex: 0 })}>
               Where
             </StepButton>
           </Step>
           <Step completed={!this.isStepTwoInvalid}>
-            <StepButton onTouchTap={() => this.setState({ stepIndex: 1 })}>
+            <StepButton onClick={() => this.setState({ stepIndex: 1 })}>
               When
             </StepButton>
           </Step>
           <Step>
-            <StepButton onTouchTap={() => this.setState({ stepIndex: 2 })}>
+            <StepButton onClick={() => this.setState({ stepIndex: 2 })}>
               Details
             </StepButton>
           </Step>
@@ -297,14 +297,14 @@ class HostGathering extends Component {
           {/*<FlatButton
             label="Back"
             disabled={this.state.stepIndex === 0}
-            onTouchTap={() => this.handlePrev()}
+           onClick={() => this.handlePrev()}
           />*/}
 
           {this.state.stepIndex === 2 &&
             <RaisedButton
               label={this.state.stepIndex === 2 ? 'Finish' : 'Next'}
               primary={true}
-              onTouchTap={this.handleNext}
+             onClick={this.handleNext}
             />}
         </div>
 

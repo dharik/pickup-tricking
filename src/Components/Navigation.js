@@ -34,17 +34,17 @@ const Navigation = ({
     <div>
       <AppBar
         title="TrickSpot"
-        onLeftIconButtonTouchTap={onMenuClick}
-        onTitleTouchTap={onMenuClick}
+        onLeftIconButtonClick={onMenuClick}
+        onTitleClick={onMenuClick}
       />
 
       <Drawer open={drawerOpen}>
-        <MenuItem onTouchTap={() => open('/browse')}>Find tricking spots</MenuItem>
-        <MenuItem onTouchTap={() => open('/host')}>Add a spot to the map</MenuItem>
-        <MenuItem onTouchTap={() => open('/mine')}>Update my spots</MenuItem>
-        <MenuItem onTouchTap={() => open('/about')}>About TrickSpot</MenuItem>
+        <MenuItem onClick={() => open('/browse')}>Find tricking spots</MenuItem>
+        <MenuItem onClick={() => open('/host')}>Add a spot to the map</MenuItem>
+        <MenuItem onClick={() => open('/mine')}>Update my spots</MenuItem>
+        <MenuItem onClick={() => open('/about')}>About TrickSpot</MenuItem>
         {auth.currentUser &&
-          <MenuItem onTouchTap={signOut}>
+          <MenuItem onClick={signOut}>
             Logout
           </MenuItem>}
       </Drawer>
