@@ -1,57 +1,55 @@
-import React, { Component } from 'react';
-import Checkbox from 'material-ui/Checkbox';
-import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import DatePicker from 'material-ui/DatePicker';
-import TimePicker from 'material-ui/TimePicker';
-import TextField from 'material-ui/TextField';
-import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
-import SearchBox from 'react-google-maps/lib/places/SearchBox';
-import { Step, Stepper, StepButton } from 'material-ui/Stepper';
-import RaisedButton from 'material-ui/RaisedButton';
-import FlatButton from 'material-ui/FlatButton';
-import { db, auth } from '../firebase';
-import { Prompt } from 'react-router-dom';
-import { Redirect, withRouter } from 'react-router-dom';
+import React, { Component } from "react";
+import Checkbox from "material-ui/Checkbox";
+import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton";
+import SelectField from "material-ui/SelectField";
+import MenuItem from "material-ui/MenuItem";
+import DatePicker from "material-ui/DatePicker";
+import TimePicker from "material-ui/TimePicker";
+import TextField from "material-ui/TextField";
+import { withGoogleMap, GoogleMap, Marker } from "react-google-maps";
+import { Step, Stepper, StepButton } from "material-ui/Stepper";
+import RaisedButton from "material-ui/RaisedButton";
+import FlatButton from "material-ui/FlatButton";
+import { db, auth } from "../firebase";
+import { Prompt } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
+import SearchBox from "react-google-maps/lib/components/places/SearchBox";
 
 const weekdays = [
-  'Sundays',
-  'Mondays',
-  'Tuesdays',
-  'Wednesdays',
-  'Thursdays',
-  'Fridays',
-  'Saturdays'
+  "Sundays",
+  "Mondays",
+  "Tuesdays",
+  "Wednesdays",
+  "Thursdays",
+  "Fridays",
+  "Saturdays"
 ];
 
 const INPUT_STYLE = {
   boxSizing: `border-box`,
-  MozBoxSizing: `border-box`,
   border: `1px solid transparent`,
   width: `240px`,
   height: `32px`,
-  marginTop: `27px`,
-  padding: `0 12px`,
-  borderRadius: `1px`,
+  padding: `1rem`,
+  margin: '1rem',
+  borderRadius: `3px`,
   boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-  fontSize: `14px`,
   outline: `none`,
   textOverflow: `ellipses`
 };
 
-const HostGatheringMap = withGoogleMap(props =>
+const HostGatheringMap = withGoogleMap(props => (
   <GoogleMap defaultZoom={10} center={props.center} onClick={props.onMapClick}>
-    {/*<SearchBox
+    <SearchBox
       ref={props.onSearchBoxMounted}
-      inputPlaceholder="Enter an address"
-      controlPosition={window.google.maps.ControlPosition.TOP_LEFT}
+      controlPosition={window.google.maps.ControlPosition.LEFT_TOP}
       onPlacesChanged={props.onPlacesChanged}
-      inputStyle={INPUT_STYLE}
-    />*/}
+    >
+      <input type="text" placeholder="Search..." style={INPUT_STYLE} />
+    </SearchBox>
     <Marker position={props.marker} key="Test" defaultAnimation={2} />
   </GoogleMap>
-);
+));
 
 class HostGathering extends Component {
   state = {
@@ -59,8 +57,8 @@ class HostGathering extends Component {
     isGrass: false,
     hasCrashPads: false,
     isFree: false,
-    frequency: 'weekly',
-    weekly_days: ['Saturdays', 'Fridays'],
+    frequency: "weekly",
+    weekly_days: ["Saturdays", "Fridays"],
     selectedLocation: {
       lat: this.props.center.lat,
       lng: this.props.center.lng
@@ -69,18 +67,18 @@ class HostGathering extends Component {
     date: null,
     time: null,
     stepIndex: 0,
-    title: '',
-    url: '',
-    description: '',
+    title: "",
+    url: "",
+    description: "",
     done: false
   };
 
   stepOne() {
     return (
-      <div style={{ height: '400px', width: '100%' }}>
+      <div style={{ height: "400px", width: "100%" }}>
         <HostGatheringMap
-          containerElement={<div style={{ height: '100%', width: '100%' }} />}
-          mapElement={<div style={{ height: '100%', width: '100%' }} />}
+          containerElement={<div style={{ height: "100%", width: "100%" }} />}
+          mapElement={<div style={{ height: "100%", width: "100%" }} />}
           center={
             this.state.selectedLocationHasChanged
               ? this.state.selectedLocation
@@ -100,7 +98,8 @@ class HostGathering extends Component {
                 lat: event.latLng.lat(),
                 lng: event.latLng.lng()
               }
-            })}
+            })
+          }
         />
       </div>
     );
@@ -109,30 +108,38 @@ class HostGathering extends Component {
   searchPlaces() {
     const places = this._searchBox.getPlaces();
     if (places && places.length > 0) {
+      const loc = places[0];
+      console.info(loc);
+
       this.setState({
         selectedLocationHasChanged: true,
-        selectedLocation: this._searchBox.getPlaces()[0].geometry.location
+        selectedLocation: {
+          lat: loc.geometry.location.lat(),
+          lng: loc.geometry.location.lng()
+        },
+        title: loc.name
       });
     }
   }
 
   selectLocation({ x, y, lat, lng, event }) {
-    console.info('Selected', lat, lng);
+    console.info("Selected", lat, lng);
   }
 
   stepTwo() {
     return (
-      <div style={{padding: '5px'}}>
+      <div style={{ padding: "5px" }}>
         <h3>How often does this gathering occur?</h3>
         <div
-          style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}
+          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
         >
           <div style={{ flex: 1 }}>
             <RadioButtonGroup
               name="frequency"
               defaultSelected={this.state.frequency}
               onChange={(event, newFrequency) =>
-                this.setState({ frequency: newFrequency })}
+                this.setState({ frequency: newFrequency })
+              }
             >
               <RadioButton value="once" label="Just once" />
               <RadioButton value="weekly" label="Weekly" />
@@ -141,31 +148,35 @@ class HostGathering extends Component {
           </div>
 
           <div style={{ flex: 2 }}>
-            {this.state.frequency === 'once' &&
+            {this.state.frequency === "once" && (
               <DatePicker
                 hintText="What date?"
                 onChange={(event, date) => this.setState({ date })}
                 value={this.state.date}
-              />}
-            {this.state.frequency === 'once' &&
+              />
+            )}
+            {this.state.frequency === "once" && (
               <TimePicker
                 hintText="At what time?"
                 minutesStep={10}
                 onChange={(event, time) => this.setState({ time })}
                 value={this.state.date}
-              />}
-            {this.state.frequency === 'weekly' &&
+              />
+            )}
+            {this.state.frequency === "weekly" && (
               <SelectField
                 multiple={true}
                 hintText="Which days?"
                 value={this.state.weekly_days}
                 onChange={(event, index, values) =>
-                  this.setState({ weekly_days: values })}
+                  this.setState({ weekly_days: values })
+                }
               >
                 {this.menuItems(this.state.weekly_days)}
-              </SelectField>}
-            {this.state.frequency === 'other' &&
-              'You can specify a schedule in the next step'}
+              </SelectField>
+            )}
+            {this.state.frequency === "other" &&
+              "You can specify a schedule in the next step"}
           </div>
         </div>
       </div>
@@ -175,7 +186,7 @@ class HostGathering extends Component {
   getMergedDate() {
     if (this.state.date && this.state.time) {
       return new Date(
-        this.state.date.toDateString() + ' ' + this.state.time.toTimeString()
+        this.state.date.toDateString() + " " + this.state.time.toTimeString()
       );
     } else if (this.state.date) {
       return this.state.date;
@@ -188,7 +199,7 @@ class HostGathering extends Component {
 
   stepThree() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', padding: '5px' }}>
+      <div style={{ display: "flex", flexDirection: "column", padding: "5px" }}>
         <TextField
           hintText="Give your gathering a title"
           floatingLabelText="Gathering name"
@@ -214,7 +225,7 @@ class HostGathering extends Component {
           value={this.state.description}
           onChange={(event, description) => this.setState({ description })}
           rows={4}
-          hintText="Be specific about when to meet, what to look for, what to bring, etc. Add information about how to contact you if necessary -- for example, a phone number or instagram handle"
+          hintText="When to meet, what to look for, what to bring, registration necessary, etc. Add your instagram handle too if you'd like"
         />
 
         <h4>About the location</h4>
@@ -258,14 +269,16 @@ class HostGathering extends Component {
 
   render() {
     if (!auth.currentUser) {
-      return <Redirect to={{ pathname: '/login', state: { from: '/host' } }} />;
+      return <Redirect to={{ pathname: "/login", state: { from: "/host" } }} />;
     }
 
-    if(this.state.done) {
-      return <div style={{padding: '5px'}}>
-        <h2>Success!</h2>
-        <Redirect to="/browse" />
-      </div>
+    if (this.state.done) {
+      return (
+        <div style={{ padding: "5px" }}>
+          <h2>Success!</h2>
+          <Redirect to="/browse" />
+        </div>
+      );
     }
 
     return (
@@ -293,19 +306,20 @@ class HostGathering extends Component {
         </Stepper>
         {this.getStepContent()}
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
           {/*<FlatButton
             label="Back"
             disabled={this.state.stepIndex === 0}
            onClick={() => this.handlePrev()}
           />*/}
 
-          {this.state.stepIndex === 2 &&
+          {this.state.stepIndex === 2 && (
             <RaisedButton
-              label={this.state.stepIndex === 2 ? 'Finish' : 'Next'}
+              label={this.state.stepIndex === 2 ? "Finish" : "Next"}
               primary={true}
-             onClick={this.handleNext}
-            />}
+              onClick={this.handleNext}
+            />
+          )}
         </div>
 
         <Prompt
@@ -336,8 +350,8 @@ class HostGathering extends Component {
   get isStepTwoInvalid() {
     const date = this.getMergedDate() ? this.getMergedDate().getTime() : null;
     return (
-      (this.state.frequency === 'once' && date == null) ||
-      (this.state.frequency === 'weekly' && this.state.weekly_days.length === 0)
+      (this.state.frequency === "once" && date == null) ||
+      (this.state.frequency === "weekly" && this.state.weekly_days.length === 0)
     );
   }
 
@@ -345,31 +359,31 @@ class HostGathering extends Component {
     let errors = [];
     const date = this.getMergedDate() ? this.getMergedDate().getTime() : null;
 
-    if (this.state.frequency === 'once' && date == null) {
-      errors.push('Select a date & time');
+    if (this.state.frequency === "once" && date == null) {
+      errors.push("Select a date & time");
     }
 
     if (
-      this.state.frequency === 'weekly' &&
+      this.state.frequency === "weekly" &&
       this.state.weekly_days.length === 0
     ) {
-      errors.push('Please select which days of the week you meet');
+      errors.push("Please select which days of the week you meet");
     }
 
     if (!this.state.selectedLocationHasChanged) {
-      errors.push('Select a location');
+      errors.push("Select a location");
     }
 
-    if (this.state.title === '') {
-      errors.push('Enter a title');
+    if (this.state.title === "") {
+      errors.push("Enter a title");
     }
 
     if (this.state.description.length < 7) {
-      errors.push('Enter something useful in the description');
+      errors.push("Enter something useful in the description");
     }
 
     if (errors.length > 0) {
-      alert(errors.join('\n'));
+      alert(errors.join("\n"));
     } else {
       const {
         isSpringFloor,
@@ -385,38 +399,41 @@ class HostGathering extends Component {
       } = this.state;
       const uid = auth.currentUser.uid;
 
-      db.ref('gatherings').push({
-        isSpringFloor,
-        isGrass,
-        isFree,
-        hasCrashPads,
-        frequency,
-        weekly_days,
-        selectedLocation,
-        title,
-        url,
-        description,
-        date,
-        uid,
-        created: new Date().getTime()
-      }, error => {
-        if (error) {
-          alert(
-            'Something went wrong! Please try again. If the problem persists, sorry!'
-          );
-          console.error(error);
-        } else {
-          // It worked
-          this.setState({
-            done: true
-          })
+      db.ref("gatherings").push(
+        {
+          isSpringFloor,
+          isGrass,
+          isFree,
+          hasCrashPads,
+          frequency,
+          weekly_days,
+          selectedLocation,
+          title,
+          url,
+          description,
+          date,
+          uid,
+          created: new Date().getTime()
+        },
+        error => {
+          if (error) {
+            alert(
+              "Something went wrong! Please try again. If the problem persists, sorry!"
+            );
+            console.error(error);
+          } else {
+            // It worked
+            this.setState({
+              done: true
+            });
+          }
         }
-      });
+      );
     }
   }
 
   menuItems() {
-    return weekdays.map(day =>
+    return weekdays.map(day => (
       <MenuItem
         key={day}
         insetChildren={true}
@@ -424,7 +441,7 @@ class HostGathering extends Component {
         value={day}
         primaryText={day}
       />
-    );
+    ));
   }
 }
 

@@ -8,7 +8,7 @@
     "material-ui": "^0.20.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "react-google-maps": "^7.0.0",
+    "react-google-maps": "^9.4.5",
     "react-router-dom": "^4.1.1",
     "react-scripts": "1.1.4",
     "reactfire": "^1.0.0"
