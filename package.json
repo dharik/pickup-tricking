@@ -10,12 +10,12 @@
     "react-dom": "^15.6.1",
     "react-google-maps": "^7.0.0",
     "react-router-dom": "^4.1.1",
+    "react-scripts": "1.1.4",
     "react-tap-event-plugin": "^2.0.1",
     "reactfire": "^1.0.0"
   },
   "devDependencies": {
-    "babel-preset-stage-1": "^6.24.1",
-    "react-scripts": "1.0.7"
+    "babel-preset-stage-1": "^6.24.1"
   },
   "scripts": {
     "start": "react-scripts start",
