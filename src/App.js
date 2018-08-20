@@ -25,15 +25,6 @@ class App extends Component {
     requestingLocation: true
   };
 
-  openHostModal = () => {
-    this.closeDrawer();
-    this.setState({ hostModalOpen: true });
-  };
-
-  closeHostModal = () => {
-    this.setState({ hostModalOpen: false });
-  };
-
   componentDidMount() {
     if (window.navigator.geolocation) {
       window.navigator.geolocation.getCurrentPosition(
@@ -95,7 +86,6 @@ class App extends Component {
               }}
             >
               <Navigation
-                openHostModalFn={this.openHostModal}
                 onMenuClick={this.invertDrawerOpen}
                 onCloseDrawer={this.closeDrawer}
                 drawerOpen={this.state.drawerOpen}

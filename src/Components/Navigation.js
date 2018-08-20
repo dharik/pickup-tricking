@@ -7,9 +7,7 @@ import { auth } from '../firebase';
 import { Link, withRouter } from 'react-router-dom';
 
 const Navigation = ({
-  openHostModalFn,
   onMenuClick,
-  match,
   drawerOpen,
   onCloseDrawer,
   history
