@@ -5,6 +5,7 @@ import MenuItem from 'material-ui/MenuItem';
 import { auth } from '../firebase';
 
 import { Link, withRouter } from 'react-router-dom';
+import { FlatButton } from 'material-ui';
 
 const Navigation = ({
   onMenuClick,
@@ -34,6 +35,9 @@ const Navigation = ({
         title="TrickSpot"
         onLeftIconButtonClick={onMenuClick}
         onTitleClick={onMenuClick}
+        iconElementRight={
+          <FlatButton label="Add a spot" />
+        }
       />
 
       <Drawer open={drawerOpen}>
