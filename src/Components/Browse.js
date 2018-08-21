@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
 import {
   withGoogleMap,
   GoogleMap,
   Marker,
   InfoWindow
 } from 'react-google-maps';
-import { Card, CardActions, CardHeader, CardText, CardMedia, CardTitle } from 'material-ui/Card';
-import RaisedButton from 'material-ui/RaisedButton';
 
-import Chip from 'material-ui/Chip';
 import { db } from '../firebase';
 
 const gatheringInfo = ({ marker }) => {
@@ -67,10 +63,10 @@ const gatheringInfo = ({ marker }) => {
         </a>
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {marker.isSpringFloor && <Chip>Spring floor</Chip>}
-        {marker.isGrass && <Chip>Grass</Chip>}
-        {marker.isFree && <Chip>Free</Chip>}
-        {marker.hasCrashPads && <Chip>Has crashpads</Chip>}
+        {marker.isSpringFloor && <span>Spring floor</span>}
+        {marker.isGrass && <span>Grass</span>}
+        {marker.isFree && <span>Free</span>}
+        {marker.hasCrashPads && <span>Has crashpads</span>}
       </div>
     </div>
   );
@@ -120,8 +116,8 @@ class Browse extends Component {
   render() {
     return (
       <BrowseMap
-        containerElement={<div style={{ height: '100%', width: '100%' }} />}
-        mapElement={<div style={{ height: '100%', width: '100%' }} />}
+        containerElement={<div style={{ height: '100vh', width: '100vh' }} />}
+        mapElement={<div style={{ height: '100vh', width: '100vh' }} />}
         onMapClick={this.props.onMapClick}
         markers={this.state.gatherings}
         center={this.state.center}

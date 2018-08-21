@@ -1,5 +1,4 @@
 import React from 'react';
-import Divider from 'material-ui/Divider';
 import { Link, withRouter } from 'react-router-dom';
 
 const About = () => {
@@ -17,7 +16,7 @@ const About = () => {
         </a>.
       </p>
 
-      <Divider />
+      <hr />
 
       <h2>Why was this made?</h2>
       <p>
@@ -38,7 +37,7 @@ const About = () => {
         </li>
       </ul>
 
-      <Divider />
+      <hr />
 
       <h2>How do I use this?</h2>
       <h5>If you're looking for a spot to trick</h5>
@@ -50,9 +49,9 @@ const About = () => {
         <Link to="/host">Add a spot</Link> so other trickers can find you.
       </p>
 
-      <Divider />
+      <hr />
 
-      <Divider />
+      <hr />
       <h2>Who made this?</h2>
       <p>
         I did, as a side-project. I've been tricking on &amp; off (mostly off)

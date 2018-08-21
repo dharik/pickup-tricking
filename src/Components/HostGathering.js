@@ -1,15 +1,5 @@
 import React, { Component } from "react";
-import Checkbox from "material-ui/Checkbox";
-import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton";
-import SelectField from "material-ui/SelectField";
-import MenuItem from "material-ui/MenuItem";
-import DatePicker from "material-ui/DatePicker";
-import TimePicker from "material-ui/TimePicker";
-import TextField from "material-ui/TextField";
 import { withGoogleMap, GoogleMap, Marker } from "react-google-maps";
-import { Step, Stepper, StepButton } from "material-ui/Stepper";
-import RaisedButton from "material-ui/RaisedButton";
-import FlatButton from "material-ui/FlatButton";
 import { db, auth } from "../firebase";
 import { Prompt } from "react-router-dom";
 import { Redirect, withRouter } from "react-router-dom";
@@ -31,7 +21,7 @@ const INPUT_STYLE = {
   width: `240px`,
   height: `32px`,
   padding: `1rem`,
-  margin: '1rem',
+  margin: "1rem",
   borderRadius: `3px`,
   boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
   outline: `none`,
@@ -134,47 +124,56 @@ class HostGathering extends Component {
           style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
         >
           <div style={{ flex: 1 }}>
-            <RadioButtonGroup
+            <input
+              type="radio"
               name="frequency"
-              defaultSelected={this.state.frequency}
               onChange={(event, newFrequency) =>
                 this.setState({ frequency: newFrequency })
               }
-            >
-              <RadioButton value="once" label="Just once" />
-              <RadioButton value="weekly" label="Weekly" />
-              <RadioButton value="other" label="Other" />
-            </RadioButtonGroup>
+              value="once"
+              selected={this.state.frequency === "once"}
+            />{" "}
+            Just once
+            <input
+              type="radio"
+              name="frequency"
+              onChange={(event, newFrequency) =>
+                this.setState({ frequency: newFrequency })
+              }
+              value="weekly"
+              selected={this.state.frequency === "weekly"}
+            />{" "}
+            Weekly
+            <input
+              type="radio"
+              name="frequency"
+              onChange={(event, newFrequency) =>
+                this.setState({ frequency: newFrequency })
+              }
+              value="other"
+              selected={this.state.frequency === "other"}
+            />{" "}
+            Just once
           </div>
 
           <div style={{ flex: 2 }}>
-            {this.state.frequency === "once" && (
-              <DatePicker
-                hintText="What date?"
-                onChange={(event, date) => this.setState({ date })}
-                value={this.state.date}
-              />
-            )}
-            {this.state.frequency === "once" && (
-              <TimePicker
-                hintText="At what time?"
-                minutesStep={10}
-                onChange={(event, time) => this.setState({ time })}
-                value={this.state.date}
-              />
-            )}
-            {this.state.frequency === "weekly" && (
-              <SelectField
-                multiple={true}
-                hintText="Which days?"
-                value={this.state.weekly_days}
-                onChange={(event, index, values) =>
-                  this.setState({ weekly_days: values })
-                }
-              >
-                {this.menuItems(this.state.weekly_days)}
-              </SelectField>
-            )}
+            {this.state.frequency === "once" && null
+            // <DatePicker
+            //   hintText="What date?"
+            //   onChange={(event, date) => this.setState({ date })}
+            //   value={this.state.date}
+            // />
+            }
+            {this.state.frequency === "once" && null
+            // <TimePicker
+            //   hintText="At what time?"
+            //   minutesStep={10}
+            //   onChange={(event, time) => this.setState({ time })}
+            //   value={this.state.date}
+            // />
+            }
+            {this.state.frequency === "weekly" &&
+              this.menuItems(this.state.weekly_days)}
             {this.state.frequency === "other" &&
               "You can specify a schedule in the next step"}
           </div>
@@ -200,55 +199,44 @@ class HostGathering extends Component {
   stepThree() {
     return (
       <div style={{ display: "flex", flexDirection: "column", padding: "5px" }}>
-        <TextField
-          hintText="Give your gathering a title"
-          floatingLabelText="Gathering name"
+        <input
+          type="text"
+          placeholder="Give your gathering a title"
           value={this.state.title}
           onChange={(event, title) => this.setState({ title })}
-          floatingLabelFixed={true}
         />
-
-        <TextField
-          floatingLabelFixed
-          floatingLabelText="URL"
+        <input
+          type="text"
           value={this.state.url}
           onChange={(event, url) => this.setState({ url })}
-          hintText="Facebook, Meetup.com, whatever"
+          placeholder="Facebook, Meetup.com, whatever"
         />
-
         <br />
-
-        <TextField
-          multiLine
-          floatingLabelText="Details"
-          floatingLabelFixed
-          value={this.state.description}
+        <textarea
           onChange={(event, description) => this.setState({ description })}
           rows={4}
-          hintText="When to meet, what to look for, what to bring, registration necessary, etc. Add your instagram handle too if you'd like"
+          placeholder="When to meet, what to look for, what to bring, registration necessary, etc. Add your instagram handle too if you'd like"
+        >
+          {this.state.description}
+        </textarea>
         />
-
         <h4>About the location</h4>
-        <Checkbox
+        <input type="checkbox"
           checked={this.state.isSpringFloor}
           onCheck={(event, b) => this.setState({ isSpringFloor: b })}
-          label="Spring floors"
-        />
-        <Checkbox
+        />Spring floors
+        <input type="checkbox"
           checked={this.state.isGrass}
           onCheck={(event, b) => this.setState({ isGrass: b })}
-          label="Grass"
-        />
-        <Checkbox
+        />Grass
+        <input type="checkbox"
           checked={this.state.hasCrashPads}
           onCheck={(event, b) => this.setState({ hasCrashPads: b })}
-          label="Has crashpads"
-        />
-        <Checkbox
+        />Has crashpads
+        <input type="checkbox"
           checked={this.state.isFree}
           onCheck={(event, b) => this.setState({ isFree: b })}
-          label="Free (no fees to enter)"
-        />
+        />Free (no fee to enter)
       </div>
     );
   }
@@ -283,29 +271,12 @@ class HostGathering extends Component {
 
     return (
       <div>
-        <Stepper
-          activeStep={this.state.stepIndex}
-          linear={false}
-          orientation="horizontal"
-        >
-          <Step completed={this.state.selectedLocationHasChanged}>
-            <StepButton onClick={() => this.setState({ stepIndex: 0 })}>
-              Where
-            </StepButton>
-          </Step>
-          <Step completed={!this.isStepTwoInvalid}>
-            <StepButton onClick={() => this.setState({ stepIndex: 1 })}>
-              When
-            </StepButton>
-          </Step>
-          <Step>
-            <StepButton onClick={() => this.setState({ stepIndex: 2 })}>
-              Details
-            </StepButton>
-          </Step>
-        </Stepper>
+        {this.state.selectedLocationHasChanged && "(Done)"}
+        <button onClick={() => this.setState({ stepIndex: 0 })}>Where</button>
+        {!this.isStepTwoInvalid && "(Done)"}>
+        <button onClick={() => this.setState({ stepIndex: 1 })}>When</button>
+        <button onClick={() => this.setState({ stepIndex: 2 })}>Details</button>
         {this.getStepContent()}
-
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           {/*<FlatButton
             label="Back"
@@ -314,18 +285,15 @@ class HostGathering extends Component {
           />*/}
 
           {this.state.stepIndex === 2 && (
-            <RaisedButton
-              label={this.state.stepIndex === 2 ? "Finish" : "Next"}
-              primary={true}
-              onClick={this.handleNext}
-            />
+            <button primary={true} onClick={this.handleNext}>
+              {this.state.stepIndex === 2 ? "Finish" : "Next"}
+            </button>
           )}
         </div>
-
-        <Prompt
+        {/* <Prompt
           when={this.state.selectedLocationHasChanged && !this.state.done}
           message="Are you sure you want to navigate away from this page? You will lose any form progress"
-        />
+        /> */}
       </div>
     );
   }
@@ -434,13 +402,16 @@ class HostGathering extends Component {
 
   menuItems() {
     return weekdays.map(day => (
-      <MenuItem
-        key={day}
-        insetChildren={true}
-        checked={this.state.weekly_days.indexOf(day) > -1}
-        value={day}
-        primaryText={day}
-      />
+      <React.Fragment>
+        {" "}
+        <input
+          type="checkbox"
+          key={day}
+          checked={this.state.weekly_days.indexOf(day) > -1}
+          value={day}
+        />
+        {day}
+      </React.Fragment>
     ));
   }
 }

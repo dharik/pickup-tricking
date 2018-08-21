@@ -1,28 +1,18 @@
-import React, { Component } from 'react';
-import './App.css';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import theme from './TrickSpotTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import Navigation from './Components/Navigation';
-
-import HostGathering from './Components/HostGathering';
-import ManageGatherings from './Components/ManageGatherings';
-
-import Browse from './Components/Browse';
-import Login from './Components/Login';
-import Snackbar from 'material-ui/Snackbar';
-
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
-import About from './Components/About';
+import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Navigation from "./Components/Navigation";
+import HostGathering from "./Components/HostGathering";
+import ManageGatherings from "./Components/ManageGatherings";
+import Browse from "./Components/Browse";
+import Login from "./Components/Login";
+import About from "./Components/About";
+import "./App.css";
 
 class App extends Component {
   state = {
     center: { lat: 31.8610858, lng: -122.2695871 },
     userCenter: { lat: 31.8610858, lng: -122.2695871 },
     userCenterChanged: false,
-    drawerOpen: false,
-    requestingLocation: true
   };
 
   componentDidMount() {
@@ -49,23 +39,6 @@ class App extends Component {
     }
   }
 
-  invertDrawerOpen = () => {
-    this.setState({
-      drawerOpen: !this.state.drawerOpen
-    });
-  };
-  closeDrawer = () => {
-    this.setState({
-      drawerOpen: false
-    });
-  };
-
-  closeRequestionLocation = () => {
-    this.setState({
-      requestingLocation: false
-    });
-  };
-
   onBoundsChanged = newCenter => {
     this.setState({
       userCenter: newCenter,
@@ -75,55 +48,52 @@ class App extends Component {
 
   render() {
     return (
-      <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
-        <div style={{ height: '100%' }}>
-          <Router>
-            <div
-              style={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column'
-              }}
-            >
-              <Navigation
-                onMenuClick={this.invertDrawerOpen}
-                onCloseDrawer={this.closeDrawer}
-                drawerOpen={this.state.drawerOpen}
-              />
+        <Router>
+          <div
+            style={{
+              height: "100vh",
+              width: "100vh"
+            }}
+          >
+              <Switch>
+                <Route path="/about" component={About} />
+                <Route path="/login" component={Login} />
+                <Route
+                  path="/host"
+                  render={() => (
+                    <HostGathering
+                      center={
+                        this.state.userCenterChanged
+                          ? this.state.userCenter
+                          : this.state.center
+                      }
+                    />
+                  )}
+                />
+                <Route path="/mine" component={ManageGatherings} />
+                <Route
+                  render={() => (
+                    <Browse
+                      center={
+                        this.state.userCenterChanged
+                          ? this.state.userCenter
+                          : this.state.center
+                      }
+                      onMapClick={this.closeDrawer}
+                      onBoundsChanged={this.onBoundsChanged}
+                    />
+                  )}
+                />
+              </Switch>
 
-              <div style={{ flex: 1 }}>
-                <Switch>
-                  <Route path="/about" component={About} />
-                  <Route path="/login" component={Login} />
-                  <Route
-                    path="/host"
-                    render={() =>
-                      <HostGathering
-                        center={this.state.userCenterChanged ? this.state.userCenter : this.state.center}
-                      />}
-                  />
-                  <Route path="/mine" component={ManageGatherings} />
-                  <Route
-                    render={() =>
-                      <Browse
-                        center={this.state.userCenterChanged ? this.state.userCenter : this.state.center}
-                        onMapClick={this.closeDrawer}
-                        onBoundsChanged={this.onBoundsChanged}
-                      />}
-                  />
-                </Switch>
-              </div>
-
-              <Snackbar
-                open={this.state.requestingLocation}
-                message="Requesting your location..."
-                autoHideDuration={5000}
-                onRequestClose={this.closeRequestionLocation}
-              />
-            </div>
-          </Router>
-        </div>
-      </MuiThemeProvider>
+            {/* <Snackbar
+              open={this.state.requestingLocation}
+              message="Requesting your location..."
+              autoHideDuration={5000}
+              onRequestClose={this.closeRequestionLocation}
+            /> */}
+          </div>
+        </Router>
     );
   }
 }
