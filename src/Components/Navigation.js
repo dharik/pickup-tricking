@@ -36,7 +36,7 @@ const Navigation = ({
         onLeftIconButtonClick={onMenuClick}
         onTitleClick={onMenuClick}
         iconElementRight={
-          <FlatButton label="Add a spot" />
+          <FlatButton label="Add a spot" onClick={() => open('/host')} />
         }
       />
 
