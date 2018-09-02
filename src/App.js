@@ -50,7 +50,6 @@ class App extends Component {
     return (
         <Router>
           <React.Fragment>
-            <Navigation />
             <Switch>
               <Route path="/about" component={About} />
               <Route path="/login" component={Login} />
