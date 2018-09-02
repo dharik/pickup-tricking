@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Navigation from "./Components/Navigation";
 import HostGathering from "./Components/HostGathering";
 import ManageGatherings from "./Components/ManageGatherings";
 import Browse from "./Components/Browse";

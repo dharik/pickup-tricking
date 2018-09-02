@@ -38,17 +38,6 @@ html {
   height: 100%;
 }
 
-/* .nav {
-  background-color: rgba(241, 226, 155, 0.342);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav a {
-  background-color: green;
-} */
-
 .spot-title {
   font-size: 1.5rem;
 }
