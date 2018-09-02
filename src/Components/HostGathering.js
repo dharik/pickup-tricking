@@ -1,55 +1,20 @@
-import React, { Component } from "react";
-import Checkbox from "material-ui/Checkbox";
-import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton";
-import SelectField from "material-ui/SelectField";
-import MenuItem from "material-ui/MenuItem";
-import DatePicker from "material-ui/DatePicker";
-import TimePicker from "material-ui/TimePicker";
-import TextField from "material-ui/TextField";
-import { withGoogleMap, GoogleMap, Marker } from "react-google-maps";
-import { Step, Stepper, StepButton } from "material-ui/Stepper";
-import RaisedButton from "material-ui/RaisedButton";
-import FlatButton from "material-ui/FlatButton";
-import { db, auth } from "../firebase";
-import { Prompt } from "react-router-dom";
-import { Redirect, withRouter } from "react-router-dom";
-import SearchBox from "react-google-maps/lib/components/places/SearchBox";
+import React, { Component } from 'react';
+import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
+import { db, auth } from '../firebase';
+import { Prompt } from 'react-router-dom';
+import { Redirect, withRouter } from 'react-router-dom';
+import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
+import { ChevronRight } from 'react-feather';
 
-const weekdays = [
-  "Sundays",
-  "Mondays",
-  "Tuesdays",
-  "Wednesdays",
-  "Thursdays",
-  "Fridays",
-  "Saturdays"
+const WEEK_DAYS = [
+  'Sundays',
+  'Mondays',
+  'Tuesdays',
+  'Wednesdays',
+  'Thursdays',
+  'Fridays',
+  'Saturdays'
 ];
-
-const INPUT_STYLE = {
-  boxSizing: `border-box`,
-  border: `1px solid transparent`,
-  width: `240px`,
-  height: `32px`,
-  padding: `1rem`,
-  margin: '1rem',
-  borderRadius: `3px`,
-  boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-  outline: `none`,
-  textOverflow: `ellipses`
-};
-
-const HostGatheringMap = withGoogleMap(props => (
-  <GoogleMap defaultZoom={10} center={props.center} onClick={props.onMapClick}>
-    <SearchBox
-      ref={props.onSearchBoxMounted}
-      controlPosition={window.google.maps.ControlPosition.LEFT_TOP}
-      onPlacesChanged={props.onPlacesChanged}
-    >
-      <input type="text" placeholder="Search..." style={INPUT_STYLE} />
-    </SearchBox>
-    <Marker position={props.marker} key="Test" defaultAnimation={2} />
-  </GoogleMap>
-));
 
 class HostGathering extends Component {
   state = {
@@ -57,51 +22,83 @@ class HostGathering extends Component {
     isGrass: false,
     hasCrashPads: false,
     isFree: false,
-    frequency: "weekly",
-    weekly_days: ["Saturdays", "Fridays"],
+    frequency: 'weekly',
+    weekly_days: ['Saturdays', 'Fridays'],
     selectedLocation: {
       lat: this.props.center.lat,
       lng: this.props.center.lng
     },
     selectedLocationHasChanged: false,
     date: null,
-    time: null,
-    stepIndex: 0,
-    title: "",
-    url: "",
-    description: "",
-    done: false
+    title: '',
+    url: '',
+    description: '',
+    done: false,
+    placeId: null
   };
+
+  render() {
+    if (!auth.currentUser) {
+      return <Redirect to={{ pathname: '/login', state: { from: '/host' } }} />;
+    }
+
+    if (this.state.done) {
+      return (
+        <div style={{ padding: '5px' }}>
+          <h2>Success! Thank you for your contribution!</h2>
+          <Redirect to="/browse" />
+        </div>
+      );
+    }
+
+    return (
+      <div className="add-spot-form">
+        <strong>1. Click on the map to select a location.</strong>
+        {this.stepOne()}
+
+        <br />
+        <strong>2. Describe when trickers practice here.</strong>
+        {this.stepTwo()}
+
+        <br />
+        <strong>3. Describe the location.</strong>
+        {this.stepThree()}
+
+        <button onClick={this.finish}>
+          Finish <ChevronRight />
+        </button>
+
+        <Prompt
+          when={this.state.selectedLocationHasChanged && !this.state.done}
+          message="Are you sure you want to navigate away from this page? You will lose any form progress"
+        />
+      </div>
+    );
+  }
 
   stepOne() {
     return (
-      <div style={{ height: "400px", width: "100%" }}>
-        <HostGatheringMap
-          containerElement={<div style={{ height: "100%", width: "100%" }} />}
-          mapElement={<div style={{ height: "100%", width: "100%" }} />}
-          center={
-            this.state.selectedLocationHasChanged
-              ? this.state.selectedLocation
-              : this.props.center
-          }
-          marker={
-            this.state.selectedLocationHasChanged
-              ? this.state.selectedLocation
-              : this.props.center
-          }
-          onPlacesChanged={() => this.searchPlaces()}
-          onSearchBoxMounted={box => (this._searchBox = box)}
-          onMapClick={event =>
-            this.setState({
-              selectedLocationHasChanged: true,
-              selectedLocation: {
-                lat: event.latLng.lat(),
-                lng: event.latLng.lng()
-              }
-            })
-          }
-        />
-      </div>
+      <HostGatheringMap
+        containerElement={<div style={{ height: '40vh', width: '100%' }} />}
+        mapElement={<div style={{ height: '100%', width: '100%' }} />}
+        center={
+          this.state.selectedLocationHasChanged ? this.state.selectedLocation : this.props.center
+        }
+        marker={
+          this.state.selectedLocationHasChanged ? this.state.selectedLocation : this.props.center
+        }
+        onPlacesChanged={() => this.searchPlaces()}
+        onSearchBoxMounted={box => (this._searchBox = box)}
+        onMapClick={event =>
+          this.setState({
+            selectedLocationHasChanged: true,
+            selectedLocation: {
+              lat: event.latLng.lat(),
+              lng: event.latLng.lng()
+            }
+          })
+        }
+      />
     );
   }
 
@@ -117,273 +114,200 @@ class HostGathering extends Component {
           lat: loc.geometry.location.lat(),
           lng: loc.geometry.location.lng()
         },
-        title: loc.name
+        title: loc.name,
+        url: loc.url,
+        placeId: loc.place_id
       });
     }
   }
 
   selectLocation({ x, y, lat, lng, event }) {
-    console.info("Selected", lat, lng);
+    console.info('Selected', lat, lng);
   }
 
   stepTwo() {
     return (
-      <div style={{ padding: "5px" }}>
-        <h3>How often does this gathering occur?</h3>
-        <div
-          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
-        >
-          <div style={{ flex: 1 }}>
-            <RadioButtonGroup
-              name="frequency"
-              defaultSelected={this.state.frequency}
-              onChange={(event, newFrequency) =>
-                this.setState({ frequency: newFrequency })
-              }
-            >
-              <RadioButton value="once" label="Just once" />
-              <RadioButton value="weekly" label="Weekly" />
-              <RadioButton value="other" label="Other" />
-            </RadioButtonGroup>
-          </div>
-
-          <div style={{ flex: 2 }}>
-            {this.state.frequency === "once" && (
-              <DatePicker
-                hintText="What date?"
-                onChange={(event, date) => this.setState({ date })}
-                value={this.state.date}
-              />
-            )}
-            {this.state.frequency === "once" && (
-              <TimePicker
-                hintText="At what time?"
-                minutesStep={10}
-                onChange={(event, time) => this.setState({ time })}
-                value={this.state.date}
-              />
-            )}
-            {this.state.frequency === "weekly" && (
-              <SelectField
-                multiple={true}
-                hintText="Which days?"
-                value={this.state.weekly_days}
-                onChange={(event, index, values) =>
-                  this.setState({ weekly_days: values })
-                }
-              >
-                {this.menuItems(this.state.weekly_days)}
-              </SelectField>
-            )}
-            {this.state.frequency === "other" &&
-              "You can specify a schedule in the next step"}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  getMergedDate() {
-    if (this.state.date && this.state.time) {
-      return new Date(
-        this.state.date.toDateString() + " " + this.state.time.toTimeString()
-      );
-    } else if (this.state.date) {
-      return this.state.date;
-    } else if (this.state.time) {
-      return this.state.time;
-    } else {
-      return null;
-    }
-  }
-
-  stepThree() {
-    return (
-      <div style={{ display: "flex", flexDirection: "column", padding: "5px" }}>
-        <TextField
-          hintText="Give your gathering a title"
-          floatingLabelText="Gathering name"
-          value={this.state.title}
-          onChange={(event, title) => this.setState({ title })}
-          floatingLabelFixed={true}
-        />
-
-        <TextField
-          floatingLabelFixed
-          floatingLabelText="URL"
-          value={this.state.url}
-          onChange={(event, url) => this.setState({ url })}
-          hintText="Facebook, Meetup.com, whatever"
-        />
-
-        <br />
-
-        <TextField
-          multiLine
-          floatingLabelText="Details"
-          floatingLabelFixed
-          value={this.state.description}
-          onChange={(event, description) => this.setState({ description })}
-          rows={4}
-          hintText="When to meet, what to look for, what to bring, registration necessary, etc. Add your instagram handle too if you'd like"
-        />
-
-        <h4>About the location</h4>
-        <Checkbox
-          checked={this.state.isSpringFloor}
-          onCheck={(event, b) => this.setState({ isSpringFloor: b })}
-          label="Spring floors"
-        />
-        <Checkbox
-          checked={this.state.isGrass}
-          onCheck={(event, b) => this.setState({ isGrass: b })}
-          label="Grass"
-        />
-        <Checkbox
-          checked={this.state.hasCrashPads}
-          onCheck={(event, b) => this.setState({ hasCrashPads: b })}
-          label="Has crashpads"
-        />
-        <Checkbox
-          checked={this.state.isFree}
-          onCheck={(event, b) => this.setState({ isFree: b })}
-          label="Free (no fees to enter)"
-        />
-      </div>
-    );
-  }
-
-  getStepContent() {
-    switch (this.state.stepIndex) {
-      default:
-      case 0:
-        return this.stepOne();
-
-      case 1:
-        return this.stepTwo();
-
-      case 2:
-        return this.stepThree();
-    }
-  }
-
-  render() {
-    if (!auth.currentUser) {
-      return <Redirect to={{ pathname: "/login", state: { from: "/host" } }} />;
-    }
-
-    if (this.state.done) {
-      return (
-        <div style={{ padding: "5px" }}>
-          <h2>Success!</h2>
-          <Redirect to="/browse" />
-        </div>
-      );
-    }
-
-    return (
       <div>
-        <Stepper
-          activeStep={this.state.stepIndex}
-          linear={false}
-          orientation="horizontal"
-        >
-          <Step completed={this.state.selectedLocationHasChanged}>
-            <StepButton onClick={() => this.setState({ stepIndex: 0 })}>
-              Where
-            </StepButton>
-          </Step>
-          <Step completed={!this.isStepTwoInvalid}>
-            <StepButton onClick={() => this.setState({ stepIndex: 1 })}>
-              When
-            </StepButton>
-          </Step>
-          <Step>
-            <StepButton onClick={() => this.setState({ stepIndex: 2 })}>
-              Details
-            </StepButton>
-          </Step>
-        </Stepper>
-        {this.getStepContent()}
+        <div className="add-spot-select-frequency">
+          <label>
+            <input
+              type="radio"
+              name="frequency"
+              onClick={() => this.setState({ frequency: 'once' })}
+              checked={this.state.frequency === 'once'}
+            />
+            Just once
+          </label>
 
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          {/*<FlatButton
-            label="Back"
-            disabled={this.state.stepIndex === 0}
-           onClick={() => this.handlePrev()}
-          />*/}
+          <label>
+            <input
+              type="radio"
+              name="frequency"
+              onClick={() => this.setState({ frequency: 'weekly' })}
+              checked={this.state.frequency === 'weekly'}
+            />
+            Weekly
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="frequency"
+              onClick={() => this.setState({ frequency: 'other' })}
+              checked={this.state.frequency === 'other'}
+            />
+            Other
+          </label>
+        </div>
 
-          {this.state.stepIndex === 2 && (
-            <RaisedButton
-              label={this.state.stepIndex === 2 ? "Finish" : "Next"}
-              primary={true}
-              onClick={this.handleNext}
+        <div className="add-spot-frequency">
+          {this.state.frequency === 'once' && (
+            <input
+              type="date"
+              onChange={event => this.setState({ date: event.target.valueAsNumber })}
             />
           )}
-        </div>
+          {this.state.frequency === 'weekly' && this.weekdayOptions()}
 
-        <Prompt
-          when={this.state.selectedLocationHasChanged && !this.state.done}
-          message="Are you sure you want to navigate away from this page? You will lose any form progress"
-        />
+          {this.state.frequency === 'other' && 'You can specify a schedule in the description'}
+        </div>
       </div>
     );
   }
 
-  handlePrev() {
-    this.setState({
-      stepIndex: this.state.stepIndex - 1
-    });
-  }
-  handleNext = event => {
-    event.preventDefault();
+  toggleDay = event => {
+    const day = event.target.value;
+    const checked = event.target.checked;
 
-    if (this.state.stepIndex < 2) {
+    if (checked) {
+      // Check it
       this.setState({
-        stepIndex: this.state.stepIndex + 1
+        weekly_days: [...this.state.weekly_days, day]
       });
     } else {
-      this.finish();
+      // Uncheck it
+      const selectedIndex = this.state.weekly_days.indexOf(day);
+      const newWeeklyDays = [...this.state.weekly_days];
+      newWeeklyDays.splice(selectedIndex, 1);
+      this.setState({
+        weekly_days: newWeeklyDays
+      });
     }
   };
 
-  get isStepTwoInvalid() {
-    const date = this.getMergedDate() ? this.getMergedDate().getTime() : null;
+  dayIsSelected = day => {
+    return this.state.weekly_days.indexOf(day) > -1;
+  };
+
+  weekdayOptions = () => {
+    return WEEK_DAYS.map(day => (
+      <label key={day}>
+        <input
+          type="checkbox"
+          checked={this.dayIsSelected(day)}
+          onChange={this.toggleDay}
+          value={day}
+        />
+        {day}
+      </label>
+    ));
+  };
+
+  stepThree() {
     return (
-      (this.state.frequency === "once" && date == null) ||
-      (this.state.frequency === "weekly" && this.state.weekly_days.length === 0)
+      <div style={{ display: 'flex', flexDirection: 'column', padding: '5px' }}>
+        <label>
+          Title *<br />
+          <input
+            type="text"
+            placeholder="Dope grass spot"
+            value={this.state.title}
+            onChange={event => this.setState({ title: event.target.value })}
+            pattern=".{4,}"
+          />
+        </label>
+
+        <label>
+          Website
+          <br />
+          <input
+            type="text"
+            value={this.state.url}
+            onChange={event => this.setState({ url: event.target.value })}
+            placeholder="Facebook, Meetup.com, whatever"
+          />
+        </label>
+
+        <label>
+          Description *<br />
+          <textarea
+            onChange={event => this.setState({ description: event.target.value })}
+            rows={4}
+            placeholder="When to meet, what to look for, what to bring, registration necessary, etc. Add your instagram handle too if you'd like"
+            value={this.state.description}
+          />
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={this.state.isSpringFloor}
+            onChange={event => this.setState({ isSpringFloor: event.target.checked })}
+          />
+          Spring floors
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={this.state.isGrass}
+            onChange={event => this.setState({ isGrass: event.target.checked })}
+          />
+          Grass
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={this.state.hasCrashPads}
+            onChange={event => this.setState({ hasCrashPads: event.target.checked })}
+          />
+          Has crashpads
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={this.state.isFree}
+            onChange={event => this.setState({ isFree: event.target.checked })}
+          />
+          Free (no fee to enter)
+        </label>
+      </div>
     );
   }
 
-  finish() {
+  finish = () => {
     let errors = [];
-    const date = this.getMergedDate() ? this.getMergedDate().getTime() : null;
 
-    if (this.state.frequency === "once" && date == null) {
-      errors.push("Select a date & time");
+    if (this.state.frequency === 'once' && this.state.date == null) {
+      errors.push('Select a date');
     }
 
-    if (
-      this.state.frequency === "weekly" &&
-      this.state.weekly_days.length === 0
-    ) {
-      errors.push("Please select which days of the week you meet");
+    if (this.state.frequency === 'weekly' && this.state.weekly_days.length === 0) {
+      errors.push('Please select which days of the week you meet');
     }
 
     if (!this.state.selectedLocationHasChanged) {
-      errors.push("Select a location");
+      errors.push('Select a location');
     }
 
-    if (this.state.title === "") {
-      errors.push("Enter a title");
+    if (this.state.title === '') {
+      errors.push('Enter a title');
     }
 
     if (this.state.description.length < 7) {
-      errors.push("Enter something useful in the description");
+      errors.push('Enter something useful in the description');
     }
 
     if (errors.length > 0) {
-      alert(errors.join("\n"));
+      alert(errors.join('\n'));
     } else {
       const {
         isSpringFloor,
@@ -395,11 +319,14 @@ class HostGathering extends Component {
         selectedLocation,
         title,
         url,
-        description
+        description,
+        placeId
       } = this.state;
       const uid = auth.currentUser.uid;
 
-      db.ref("gatherings").push(
+      let date = this.state.date + new Date().getTimezoneOffset() * 60 * 1000;
+
+      db.ref('gatherings').push(
         {
           isSpringFloor,
           isGrass,
@@ -413,13 +340,12 @@ class HostGathering extends Component {
           description,
           date,
           uid,
-          created: new Date().getTime()
+          created: new Date().getTime(),
+          placeId
         },
         error => {
           if (error) {
-            alert(
-              "Something went wrong! Please try again. If the problem persists, sorry!"
-            );
+            alert('Something went wrong! Please try again. If the problem persists, sorry!');
             console.error(error);
           } else {
             // It worked
@@ -430,19 +356,27 @@ class HostGathering extends Component {
         }
       );
     }
-  }
-
-  menuItems() {
-    return weekdays.map(day => (
-      <MenuItem
-        key={day}
-        insetChildren={true}
-        checked={this.state.weekly_days.indexOf(day) > -1}
-        value={day}
-        primaryText={day}
-      />
-    ));
-  }
+  };
 }
+
+const HostGatheringMap = withGoogleMap(props => (
+  <GoogleMap
+    defaultZoom={10}
+    center={props.center}
+    onClick={props.onMapClick}
+    options={{
+      gestureHandling: 'greedy',
+      mapTypeControl: false,
+      streetViewControl: false
+    }}>
+    <SearchBox
+      ref={props.onSearchBoxMounted}
+      controlPosition={window.google.maps.ControlPosition.LEFT_TOP}
+      onPlacesChanged={props.onPlacesChanged}>
+      <input type="text" placeholder="Search..." className="map-searchbox" />
+    </SearchBox>
+    <Marker position={props.marker} key="Test" defaultAnimation={2} />
+  </GoogleMap>
+));
 
 export default withRouter(HostGathering);
