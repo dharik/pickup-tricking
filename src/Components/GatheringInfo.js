@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink } from 'react-feather';
+import { ExternalLink, Navigation } from 'react-feather';
 
 const GatheringInfo = ({ marker }) => {
   if (!marker) {
@@ -16,14 +16,14 @@ const GatheringInfo = ({ marker }) => {
 
   return (
     <React.Fragment>
-      <h3>
+      <div className="spot-title">
         {marker.title}{' '}
         {marker.url && (
           <a href={marker.url} target="_blank" rel="noopener noreferrer">
             <ExternalLink />
           </a>
         )}
-      </h3>
+      </div>
 
       <div className="spot-frequency">{frequencyText}</div>
 
@@ -31,19 +31,20 @@ const GatheringInfo = ({ marker }) => {
         {marker.isSpringFloor && <span>Spring floor</span>}
         {marker.isGrass && <span>Grass</span>}
         {marker.isFree && <span>Free</span>}
-        {marker.hasCrashPads && <span>Has crashpads</span>}
+        {marker.hasCrashPads && <span>Crashpads</span>}
       </div>
 
       <p>{marker.description}</p>
-      <p>
+
+      <div className="spot-footer">
         <a
           href={`https://www.google.com/maps/dir/?api=1&destination=${
             marker.selectedLocation.lat
           },${marker.selectedLocation.lng}`}
           target="_blank">
-          Open in maps
+          <Navigation size="1rem" /> Get Directions
         </a>
-      </p>
+      </div>
     </React.Fragment>
   );
 };

@@ -23,11 +23,11 @@ html {
 }
 
 .map-half {
-  flex: 3;
+  flex: 4;
 }
 
 .list-half {
-  flex: 2;
+  flex: 6;
   overflow-y: auto;
   transition: all 0.3s;
   padding: .2rem 1rem;
@@ -38,7 +38,7 @@ html {
   height: 100%;
 }
 
-.nav {
+/* .nav {
   background-color: rgba(241, 226, 155, 0.342);
   display: flex;
   justify-content: space-between;
@@ -47,17 +47,27 @@ html {
 
 .nav a {
   background-color: green;
+} */
+
+.spot-title {
+  font-size: 1.5rem;
 }
 
 .spot-features span {
-  background-color: aquamarine;
+  background-color: rgba(62, 151, 69, 0.808);
+  color: white;
   border-radius: .3rem;
-  padding: .3rem;
+  padding: .5rem;
   margin-right: .3rem;
 }
 
 .spot-frequency {
   padding: .4rem 0;
+  font-weight: bold;
+}
+
+.spot-footer a {
+  text-decoration: none;
 }
 
 @media only screen and (max-width: 900px) {
@@ -67,6 +77,13 @@ html {
 }
 
 @media only screen and (min-width: 900px) {
+  .map-half {
+    flex: 6;
+  }
+  .list-half {
+    flex: 4;
+  }
+
   .list-half:empty {
     flex: 0;
   }

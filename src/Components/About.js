@@ -1,67 +1,56 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import { Github, Mail, Instagram } from 'react-feather';
 
 const About = () => {
   return (
     <div style={{ padding: '10px' }}>
-      <h2>What is this?</h2>
       <p>
-        <strong>TrickSpot</strong> is a tool to find &amp; share places to
-        practice the art of{' '}
-        <a
-          href="https://en.wikipedia.org/wiki/Tricking_(martial_arts)"
-          target="_blank"
-        >
-          tricking
-        </a>.
+        <strong>TrickSpot</strong> is a tool to find &amp; share places to practice the art of{' '}
+        <a href="https://en.wikipedia.org/wiki/Tricking_(martial_arts)" target="_blank">
+          tricking.
+        </a>
       </p>
 
-      <hr />
-
-      <h2>Why was this made?</h2>
       <p>
-        The tricking community is small (but growing) and it's a challenge to
-        find others who are in to it. Specifically:
+        While you're here, <Link to="/host">Add a spot</Link> - gyms, grass sessions, gatherings,
+        etc - for other trickers to check out.
+      </p>
+
+      <strong>Why does this exist?</strong>
+      
+      <p>
+        The tricking community is growing fast but it can still be a challenge to find others who
+        are in to it.
       </p>
       <ul>
+        <li>The word "tricking" is doesn't yield relevant results in search engines.</li>
         <li>
-          The word "tricking" is doesn't yield relevant results in search
-          engines.
+          Tricking is practiced in a variety of places -- gyms, parks, beaches. We can't just search
+          google maps.
         </li>
-        <li>
-          Tricking is practiced in a variety of places -- gyms, local parks,
-          beaches. We can't look for one specific type of place.
-        </li>
-        <li>
-          Facebook and meetup groups are difficult to search for by location.
-        </li>
+        <li>Facebook and meetup groups are difficult to search for by location.</li>
       </ul>
 
-      <hr />
 
-      <h2>How do I use this?</h2>
-      <h5>If you're looking for a spot to trick</h5>
+      <strong>Comments or suggestions?</strong>
       <p>
-        <Link to="/browse">Browse the map</Link> to find something close to you.
-      </p>
-      <h5>If you already have a spot</h5>
-      <p>
-        <Link to="/host">Add a spot</Link> so other trickers can find you.
+        If you have any ideas to make TrickSpot better, shoot me a message. If you'd like to get
+        involved, I could use a hand with anything: Graphic design, UX design, backend (currently
+        Firebase), frontend (React).
       </p>
 
-      <hr />
-
-      <hr />
-      <h2>Who made this?</h2>
       <p>
-        I did, as a side-project. I've been tricking on &amp; off (mostly off)
-        for at least five years. I can't spam dubs yet.
+        <Instagram />
+        <a href="https://www.instagram.com/dharik92">@dharik92</a>
       </p>
       <p>
-        <a href="mailto:dharik@trick-spot.com">
-          Email me (dharik@trick-spot.com)
-        </a>{' '}
-        with any questions, suggestions, or general feedback.
+        <Mail />
+        <a href="mailto:dharik@trick-spot.com">dharik@trick-spot.com</a>
+      </p>
+      <p>
+        <Github />
+        <a href="https://github.com/dharik/pickup-tricking">GitHub</a>
       </p>
     </div>
   );
