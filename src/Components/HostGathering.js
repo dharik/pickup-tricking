@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
 import { db, auth } from '../firebase';
-import { Prompt } from 'react-router-dom';
+import { Prompt, Link } from 'react-router-dom';
 import { Redirect, withRouter } from 'react-router-dom';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
-import { ChevronRight } from 'react-feather';
+import { ChevronRight, Check } from 'react-feather';
 
 const WEEK_DAYS = [
   'Sundays',
@@ -45,8 +45,8 @@ class HostGathering extends Component {
     if (this.state.done) {
       return (
         <div style={{ padding: '5px' }}>
-          <h2>Success! Thank you for your contribution!</h2>
-          <Redirect to="/browse" />
+          <h2><Check/> Thank you for your contribution!</h2>
+          <Link to="/browse">Click here to go back to the map</Link>
         </div>
       );
     }
