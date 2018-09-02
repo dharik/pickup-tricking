@@ -9,7 +9,7 @@ const GatheringInfo = ({ marker }) => {
   let frequencyText = '';
   if (marker.frequency === 'once') {
     const d = new Date(marker.date);
-    frequencyText = d.toLocaleString();
+    frequencyText = d.toLocaleDateString();
   } else if (marker.frequency === 'weekly') {
     frequencyText = marker.weekly_days.join(', ');
   }

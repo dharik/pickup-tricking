@@ -1,17 +1,18 @@
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import HostGathering from "./Components/HostGathering";
-import ManageGatherings from "./Components/ManageGatherings";
-import Browse from "./Components/Browse";
-import Login from "./Components/Login";
-import About from "./Components/About";
-import "./App.css";
+import React, { Component } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import HostGathering from './Components/HostGathering';
+import ManageGatherings from './Components/ManageGatherings';
+import Browse from './Components/Browse';
+import Login from './Components/Login';
+import About from './Components/About';
+import './App.css';
 
 class App extends Component {
   state = {
     center: { lat: 31.8610858, lng: -122.2695871 },
     userCenter: { lat: 31.8610858, lng: -122.2695871 },
-    userCenterChanged: false
+    userCenterChanged: false,
+    requestingLocation: true
   };
 
   componentDidMount() {
@@ -47,39 +48,34 @@ class App extends Component {
 
   render() {
     return (
-        <Router>
-          <React.Fragment>
-            <Switch>
-              <Route path="/about" component={About} />
-              <Route path="/login" component={Login} />
-              <Route
-                path="/host"
-                render={() => (
-                  <HostGathering
-                    center={
-                      this.state.userCenterChanged
-                        ? this.state.userCenter
-                        : this.state.center
-                    }
-                  />
-                )}
-              />
-              <Route path="/mine" component={ManageGatherings} />
-              <Route
-                render={() => (
-                  <Browse
-                    center={
-                      this.state.userCenterChanged
-                        ? this.state.userCenter
-                        : this.state.center
-                    }
-                    onBoundsChanged={this.onBoundsChanged}
-                  />
-                )}
-              />
-            </Switch>
-          </React.Fragment>
-        </Router>
+      <Router>
+        <React.Fragment>
+          <Switch>
+            <Route path="/about" component={About} />
+            <Route path="/login" component={Login} />
+            <Route
+              path="/host"
+              render={() => (
+                <HostGathering
+                  center={this.state.userCenterChanged ? this.state.userCenter : this.state.center}
+                />
+              )}
+            />
+            <Route path="/mine" component={ManageGatherings} />
+            <Route
+              render={() => (
+                <Browse
+                  center={this.state.userCenterChanged ? this.state.userCenter : this.state.center}
+                  onBoundsChanged={this.onBoundsChanged}
+                />
+              )}
+            />
+          </Switch>
+          {this.state.requestingLocation && (
+            <div className="requesting-location">Getting your location...</div>
+          )}
+        </React.Fragment>
+      </Router>
     );
   }
 }

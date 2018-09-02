@@ -59,6 +59,66 @@ html {
   text-decoration: none;
 }
 
+.map-searchbox {
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  width: 240px;
+  height: 32px;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  outline: none;
+  text-overflow: ellipses;
+}
+
+.requesting-location {
+  background-color: rgba(255, 255, 255, 0.609);
+  border-radius: .5rem;
+  padding: .5rem;
+  position: fixed;
+  top: 0;
+  transition: .7s all;
+  z-index: 100;
+}
+
+.add-spot-form input[type=text],
+.add-spot-form input[type=date],
+.add-spot-form textarea {
+  padding: .3rem;
+  margin: .8rem .2rem;
+  width: 80%;
+  font-family: sans-serif;
+}
+
+.add-spot-form *:invalid {
+  border: 1px solid red;
+}
+
+.add-spot-frequency {
+  display: flex;
+  flex-direction: column;
+  padding: .3rem;
+}
+
+.add-spot-frequency label {
+  padding: .3rem;
+}
+
+.add-spot-form button {
+  padding: .4rem;
+  background-color: rgb(77, 131, 77);
+  border: none;
+  color: white;
+  border-radius: .3rem;
+  font-size: 1.2rem;
+  margin: 1rem .5rem;
+}
+
+.add-spot-form svg {
+  vertical-align: middle;
+}
+
 @media only screen and (max-width: 900px) {
   .browse-container {
     flex-direction: column;
