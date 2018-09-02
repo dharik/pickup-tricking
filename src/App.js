@@ -12,7 +12,7 @@ class App extends Component {
   state = {
     center: { lat: 31.8610858, lng: -122.2695871 },
     userCenter: { lat: 31.8610858, lng: -122.2695871 },
-    userCenterChanged: false,
+    userCenterChanged: false
   };
 
   componentDidMount() {
@@ -49,50 +49,39 @@ class App extends Component {
   render() {
     return (
         <Router>
-          <div
-            style={{
-              height: "100vh",
-              width: "100vh"
-            }}
-          >
-              <Switch>
-                <Route path="/about" component={About} />
-                <Route path="/login" component={Login} />
-                <Route
-                  path="/host"
-                  render={() => (
-                    <HostGathering
-                      center={
-                        this.state.userCenterChanged
-                          ? this.state.userCenter
-                          : this.state.center
-                      }
-                    />
-                  )}
-                />
-                <Route path="/mine" component={ManageGatherings} />
-                <Route
-                  render={() => (
-                    <Browse
-                      center={
-                        this.state.userCenterChanged
-                          ? this.state.userCenter
-                          : this.state.center
-                      }
-                      onMapClick={this.closeDrawer}
-                      onBoundsChanged={this.onBoundsChanged}
-                    />
-                  )}
-                />
-              </Switch>
-
-            {/* <Snackbar
-              open={this.state.requestingLocation}
-              message="Requesting your location..."
-              autoHideDuration={5000}
-              onRequestClose={this.closeRequestionLocation}
-            /> */}
-          </div>
+          <React.Fragment>
+            <Navigation />
+            <Switch>
+              <Route path="/about" component={About} />
+              <Route path="/login" component={Login} />
+              <Route
+                path="/host"
+                render={() => (
+                  <HostGathering
+                    center={
+                      this.state.userCenterChanged
+                        ? this.state.userCenter
+                        : this.state.center
+                    }
+                  />
+                )}
+              />
+              <Route path="/mine" component={ManageGatherings} />
+              <Route
+                render={() => (
+                  <Browse
+                    center={
+                      this.state.userCenterChanged
+                        ? this.state.userCenter
+                        : this.state.center
+                    }
+                    onMapClick={this.closeDrawer}
+                    onBoundsChanged={this.onBoundsChanged}
+                  />
+                )}
+              />
+            </Switch>
+          </React.Fragment>
         </Router>
     );
   }

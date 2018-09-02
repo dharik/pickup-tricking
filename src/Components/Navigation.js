@@ -6,17 +6,14 @@ import { Link, withRouter } from 'react-router-dom';
 const Navigation = ({
   onMenuClick,
   drawerOpen,
-  onCloseDrawer,
   history
 }) => {
   const signOut = () => {
     auth.signOut();
-    onCloseDrawer();
     history.push('/');
   };
 
   const open = (rt) => {
-    onCloseDrawer();
     history.push(rt);
   }
 
@@ -27,14 +24,14 @@ const Navigation = ({
 
   return (
     <div>
-        {/* <MenuItem onClick={() => open('/browse')}>Find tricking spots</MenuItem>
-        <MenuItem onClick={() => open('/host')}>Add a spot to the map</MenuItem>
-        <MenuItem onClick={() => open('/mine')}>Update my spots</MenuItem>
-        <MenuItem onClick={() => open('/about')}>About TrickSpot</MenuItem>
+        <a onClick={() => open('/browse')}>Find tricking spots</a>
+        <a onClick={() => open('/host')}>Add a spot to the map</a>
+        <a onClick={() => open('/mine')}>Update my spots</a>
+        <a onClick={() => open('/about')}>About TrickSpot</a>
         {auth.currentUser &&
-          <MenuItem onClick={signOut}>
+          <a onClick={signOut}>
             Logout
-          </MenuItem>} */}
+          </a>}
     </div>
   );
 };
