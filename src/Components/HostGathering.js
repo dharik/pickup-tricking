@@ -153,7 +153,7 @@ class HostGathering extends Component {
               value="other"
               selected={this.state.frequency === "other"}
             />{" "}
-            Just once
+            Other
           </div>
 
           <div style={{ flex: 2 }}>

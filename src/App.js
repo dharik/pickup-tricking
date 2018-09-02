@@ -75,7 +75,6 @@ class App extends Component {
                         ? this.state.userCenter
                         : this.state.center
                     }
-                    onMapClick={this.closeDrawer}
                     onBoundsChanged={this.onBoundsChanged}
                   />
                 )}

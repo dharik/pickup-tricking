@@ -1,37 +1,15 @@
 import React from 'react';
-import { auth } from '../firebase';
 
 import { Link, withRouter } from 'react-router-dom';
+import { PlusCircle } from 'react-feather';
 
-const Navigation = ({
-  onMenuClick,
-  drawerOpen,
-  history
-}) => {
-  const signOut = () => {
-    auth.signOut();
-    history.push('/');
-  };
-
-  const open = (rt) => {
-    history.push(rt);
-  }
-
-  let provider =
-    auth.currentUser &&
-    auth.currentUser.providerData &&
-    auth.currentUser.providerData[0].providerId.replace('.com', '');
-
+const Navigation = () => {
   return (
-    <div>
-        <a onClick={() => open('/browse')}>Find tricking spots</a>
-        <a onClick={() => open('/host')}>Add a spot to the map</a>
-        <a onClick={() => open('/mine')}>Update my spots</a>
-        <a onClick={() => open('/about')}>About TrickSpot</a>
-        {auth.currentUser &&
-          <a onClick={signOut}>
-            Logout
-          </a>}
+    <div className="nav">
+      TrickSpot - Find local tricking spots
+      <Link to="browse">Map</Link>
+      <Link to="/about">About</Link>
+      <Link to="/host">Add spot<PlusCircle /></Link>
     </div>
   );
 };
