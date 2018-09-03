@@ -5,6 +5,7 @@ import { Prompt, Link } from 'react-router-dom';
 import { Redirect, withRouter } from 'react-router-dom';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import { ChevronRight, Check } from 'react-feather';
+import { produce } from 'immer';
 
 const WEEK_DAYS = [
   'Sundays',
@@ -45,7 +46,9 @@ class HostGathering extends Component {
     if (this.state.done) {
       return (
         <div style={{ padding: '5px' }}>
-          <h2><Check/> Thank you for your contribution!</h2>
+          <h2>
+            <Check /> Thank you for your contribution!
+          </h2>
           <Link to="/browse">Click here to go back to the map</Link>
         </div>
       );
@@ -180,17 +183,19 @@ class HostGathering extends Component {
 
     if (checked) {
       // Check it
-      this.setState({
-        weekly_days: [...this.state.weekly_days, day]
-      });
+      this.setState(
+        produce(this.state, draft => {
+          draft.weekly_days.push(day);
+        })
+      );
     } else {
       // Uncheck it
-      const selectedIndex = this.state.weekly_days.indexOf(day);
-      const newWeeklyDays = [...this.state.weekly_days];
-      newWeeklyDays.splice(selectedIndex, 1);
-      this.setState({
-        weekly_days: newWeeklyDays
-      });
+      this.setState(
+        produce(this.state, draft => {
+          const selectedIndex = this.state.weekly_days.indexOf(day);
+          draft.weekly_days.splice(selectedIndex, 1);
+        })
+      );
     }
   };
 

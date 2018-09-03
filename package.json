@@ -5,6 +5,7 @@
   "dependencies": {
     "firebase": "^4.1.3",
     "firebaseui": "^2.2.1",
+    "immer": "^1.5.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-feather": "^1.1.1",
