@@ -9,6 +9,11 @@ var authUi = new firebaseui.auth.AuthUI(auth);
 class Login extends Component {
   constructor(props) {
     super(props);
+    
+    auth.signInAnonymously().then(() => {
+      this.redirectBack();
+    });
+
     auth.onAuthStateChanged(next => {
       if (next) {
         this.redirectBack();
