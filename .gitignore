@@ -21,3 +21,5 @@ yarn-debug.log*
 yarn-error.log*
 
 .firebase/hosting.0.cache
+firebase-debug.log
+functions/lib
