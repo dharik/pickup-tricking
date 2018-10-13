@@ -17,7 +17,7 @@ export const newGatheringSlackNotifier = functions.database
       method: 'POST',
       uri: functions.config().slack.webhook_url,
       body: {
-        text: 'New gathering created!' + '```' + gatheringStr + '```'
+        text: 'New gathering created! ```' + JSON.stringify(gatheringStr) + '```'
       },
       json: true
     });
@@ -28,7 +28,7 @@ export const newUserSlackNotifier = functions.auth.user().onCreate(async newUser
     method: 'POST',
     uri: functions.config().slack.webhook_url,
     body: {
-      text: `New user: ${newUser.displayName}`
+      text: `New user: ${JSON.stringify(newUser)}`
     },
     json: true
   });
