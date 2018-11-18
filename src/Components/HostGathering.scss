@@ -1,0 +1,65 @@
+@import '../colors.scss';
+
+.add-spot-form > strong {
+  margin-left: 0.3rem;
+}
+.add-spot-form input[type='text'],
+.add-spot-form input[type='date'],
+.add-spot-form textarea {
+  padding: 0.3rem;
+  margin: 0.8rem 0.2rem;
+  width: 80%;
+  font-family: sans-serif;
+  // background-color: $black-9;
+  // border: none;
+  border-radius: 0.7rem;
+  border: 1px solid $black-7;
+
+  &:invalid {
+    border-color: $springboard-red;
+  }
+}
+
+.add-spot-select-frequency {
+  padding: 1rem;
+
+  .btn {
+    margin-right: 0.2rem;
+    background-color: $black-8;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    color: $black-3;
+    border: none;
+    cursor: pointer;
+
+    &.selected {
+      background-color: $springboard-blue;
+      color: white;
+    }
+  }
+}
+
+.add-spot-frequency {
+  display: flex;
+  flex-direction: column;
+  padding: 0.3rem;
+}
+
+.add-spot-frequency label {
+  padding: 0.3rem;
+}
+
+.add-spot-form > button {
+  padding: 0.4rem;
+  background-color: #458b00;
+  border: none;
+  color: white;
+  border-radius: 0.3rem;
+  margin: 1rem 0.5rem;
+}
+
+.add-spot-form svg {
+  vertical-align: middle;
+  width: 1rem;
+  height: 1rem;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExternalLink, Navigation } from 'react-feather';
+import './GatheringInfo.css';
 
 const GatheringInfo = ({ marker }) => {
   if (!marker) {
@@ -34,7 +35,7 @@ const GatheringInfo = ({ marker }) => {
         {marker.hasCrashPads && <span>Crashpads</span>}
       </div>
 
-      <p>{marker.description}</p>
+      <p className="spot-description">{marker.description}</p>
 
       <div className="spot-footer">
         <a
@@ -42,7 +43,7 @@ const GatheringInfo = ({ marker }) => {
             marker.selectedLocation.lat
           },${marker.selectedLocation.lng}`}
           target="_blank">
-          <Navigation size="1rem" /> Get Directions
+          <Navigation style={{ width: '1rem', height: '1rem' }} /> Get Directions
         </a>
       </div>
     </React.Fragment>

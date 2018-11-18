@@ -6,6 +6,7 @@ import { Redirect, withRouter } from 'react-router-dom';
 import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import { ChevronRight, Check } from 'react-feather';
 import { produce } from 'immer';
+import './HostGathering.scss';
 
 const WEEK_DAYS = [
   'Sundays',
@@ -56,21 +57,19 @@ class HostGathering extends Component {
 
     return (
       <div className="add-spot-form">
-        <strong>1. Click on the map to select a location.</strong>
+        1. Click on the map to select a location.
         {this.stepOne()}
-
         <br />
-        <strong>2. Describe when trickers practice here.</strong>
+        2. Describe when trickers practice here.
         {this.stepTwo()}
-
         <br />
-        <strong>3. Describe the location.</strong>
+        3. Describe the location.
+        <br />
+        <br />
         {this.stepThree()}
-
         <button onClick={this.finish}>
           Finish <ChevronRight />
         </button>
-
         <Prompt
           when={this.state.selectedLocationHasChanged && !this.state.done}
           message="Are you sure you want to navigate away from this page? You will lose any form progress"
@@ -132,34 +131,22 @@ class HostGathering extends Component {
     return (
       <div>
         <div className="add-spot-select-frequency">
-          <label>
-            <input
-              type="radio"
-              name="frequency"
-              onClick={() => this.setState({ frequency: 'once' })}
-              checked={this.state.frequency === 'once'}
-            />
-            Just once
-          </label>
+          <button
+            className={`btn ${this.state.frequency === 'once' ? 'selected' : ''}`}
+            onClick={() => this.setState({ frequency: 'once' })}>
+            Just Once
+          </button>
 
-          <label>
-            <input
-              type="radio"
-              name="frequency"
-              onClick={() => this.setState({ frequency: 'weekly' })}
-              checked={this.state.frequency === 'weekly'}
-            />
+          <button
+            className={`btn ${this.state.frequency === 'weekly' ? 'selected' : ''}`}
+            onClick={() => this.setState({ frequency: 'weekly' })}>
             Weekly
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="frequency"
-              onClick={() => this.setState({ frequency: 'other' })}
-              checked={this.state.frequency === 'other'}
-            />
+          </button>
+          <button
+            className={`btn ${this.state.frequency === 'other' ? 'selected' : ''}`}
+            onClick={() => this.setState({ frequency: 'other' })}>
             Other
-          </label>
+          </button>
         </div>
 
         <div className="add-spot-frequency">
@@ -211,7 +198,7 @@ class HostGathering extends Component {
           checked={this.dayIsSelected(day)}
           onChange={this.toggleDay}
           value={day}
-        />
+        />{' '}
         {day}
       </label>
     ));
@@ -257,7 +244,7 @@ class HostGathering extends Component {
             type="checkbox"
             checked={this.state.isSpringFloor}
             onChange={event => this.setState({ isSpringFloor: event.target.checked })}
-          />
+          />{' '}
           Spring floors
         </label>
         <label>
@@ -265,7 +252,7 @@ class HostGathering extends Component {
             type="checkbox"
             checked={this.state.isGrass}
             onChange={event => this.setState({ isGrass: event.target.checked })}
-          />
+          />{' '}
           Grass
         </label>
         <label>
@@ -273,7 +260,7 @@ class HostGathering extends Component {
             type="checkbox"
             checked={this.state.hasCrashPads}
             onChange={event => this.setState({ hasCrashPads: event.target.checked })}
-          />
+          />{' '}
           Has crashpads
         </label>
         <label>
@@ -281,7 +268,7 @@ class HostGathering extends Component {
             type="checkbox"
             checked={this.state.isFree}
             onChange={event => this.setState({ isFree: event.target.checked })}
-          />
+          />{' '}
           Free (no fee to enter)
         </label>
       </div>
