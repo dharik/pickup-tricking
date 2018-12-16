@@ -36,7 +36,9 @@ class HostGathering extends Component {
     url: '',
     description: '',
     done: false,
-    placeId: null
+    placeId: null,
+    contactType: 'instagram',
+    contactInfo: ''
   };
 
   render() {
@@ -205,6 +207,15 @@ class HostGathering extends Component {
   };
 
   stepThree() {
+    let contactPlaceholder;
+    if (this.state.contactType === 'instagram') {
+      contactPlaceholder = 'Instagram handle';
+    } else if (this.state.contactType === 'facebook') {
+      contactPlaceholder = 'Facebook name';
+    } else if (this.state.contactType === 'email') {
+      contactPlaceholder = 'Email address';
+    }
+
     return (
       <div style={{ display: 'flex', flexDirection: 'column', padding: '5px' }}>
         <label>
@@ -225,7 +236,23 @@ class HostGathering extends Component {
             type="text"
             value={this.state.url}
             onChange={event => this.setState({ url: event.target.value })}
-            placeholder="Facebook, Meetup.com, whatever"
+            placeholder={'Facebook, Meetup.com, whatever'}
+          />
+        </label>
+
+        <label>
+          How can other trickers contact you?
+          <br />
+          <select onChange={event => this.setState({ contactType: event.target.value })}>
+            <option value="instagram">Instagram DM</option>
+            <option value="facebook">Facebook DM</option>
+            <option value="email">Email</option>
+          </select>
+          <input
+            type="text"
+            value={this.state.contactInfo}
+            onChange={event => this.setState({ contactInfo: event.target.value })}
+            placeholder={contactPlaceholder}
           />
         </label>
 
@@ -234,7 +261,7 @@ class HostGathering extends Component {
           <textarea
             onChange={event => this.setState({ description: event.target.value })}
             rows={4}
-            placeholder="When to meet, what to look for, what to bring, registration necessary, etc. Add your instagram handle too if you'd like"
+            placeholder="When to meet, what to look for, what to bring, registration necessary, etc."
             value={this.state.description}
           />
         </label>
@@ -312,7 +339,9 @@ class HostGathering extends Component {
         title,
         url,
         description,
-        placeId
+        placeId,
+        contactInfo,
+        contactType
       } = this.state;
       const uid = auth.currentUser.uid;
 
@@ -333,11 +362,15 @@ class HostGathering extends Component {
           date,
           uid,
           created: new Date().getTime(),
-          placeId
+          placeId,
+          contactInfo,
+          contactType
         },
         error => {
           if (error) {
-            alert('Something went wrong! Please try again. If the problem persists, sorry!');
+            alert(
+              'Something went wrong! Please try again. If the problem persists, email dharik@trick-spot.com and I will get it fixed for you!'
+            );
             console.error(error);
           } else {
             // It worked
