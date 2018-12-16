@@ -31,7 +31,6 @@ class HostGathering extends Component {
       lng: this.props.center.lng
     },
     selectedLocationHasChanged: false,
-    date: null,
     title: '',
     url: '',
     description: '',
@@ -134,12 +133,6 @@ class HostGathering extends Component {
       <div>
         <div className="add-spot-select-frequency">
           <button
-            className={`btn ${this.state.frequency === 'once' ? 'selected' : ''}`}
-            onClick={() => this.setState({ frequency: 'once' })}>
-            Just Once
-          </button>
-
-          <button
             className={`btn ${this.state.frequency === 'weekly' ? 'selected' : ''}`}
             onClick={() => this.setState({ frequency: 'weekly' })}>
             Weekly
@@ -152,13 +145,18 @@ class HostGathering extends Component {
         </div>
 
         <div className="add-spot-frequency">
-          {this.state.frequency === 'once' && (
-            <input
-              type="date"
-              onChange={event => this.setState({ date: event.target.valueAsNumber })}
-            />
-          )}
-          {this.state.frequency === 'weekly' && this.weekdayOptions()}
+          {this.state.frequency === 'weekly' &&
+            WEEK_DAYS.map(day => (
+              <label key={day}>
+                <input
+                  type="checkbox"
+                  checked={this.state.weekly_days.indexOf(day) > -1}
+                  onChange={this.toggleDay}
+                  value={day}
+                />{' '}
+                {day}
+              </label>
+            ))}
 
           {this.state.frequency === 'other' && 'You can specify a schedule in the description'}
         </div>
@@ -186,24 +184,6 @@ class HostGathering extends Component {
         })
       );
     }
-  };
-
-  dayIsSelected = day => {
-    return this.state.weekly_days.indexOf(day) > -1;
-  };
-
-  weekdayOptions = () => {
-    return WEEK_DAYS.map(day => (
-      <label key={day}>
-        <input
-          type="checkbox"
-          checked={this.dayIsSelected(day)}
-          onChange={this.toggleDay}
-          value={day}
-        />{' '}
-        {day}
-      </label>
-    ));
   };
 
   stepThree() {
@@ -305,10 +285,6 @@ class HostGathering extends Component {
   finish = () => {
     let errors = [];
 
-    if (this.state.frequency === 'once' && this.state.date == null) {
-      errors.push('Select a date');
-    }
-
     if (this.state.frequency === 'weekly' && this.state.weekly_days.length === 0) {
       errors.push('Please select which days of the week you meet');
     }
@@ -345,8 +321,6 @@ class HostGathering extends Component {
       } = this.state;
       const uid = auth.currentUser.uid;
 
-      let date = this.state.date + new Date().getTimezoneOffset() * 60 * 1000;
-
       db.ref('gatherings').push(
         {
           isSpringFloor,
@@ -359,7 +333,6 @@ class HostGathering extends Component {
           title,
           url,
           description,
-          date,
           uid,
           created: new Date().getTime(),
           placeId,
