@@ -9,10 +9,6 @@ var authUi = new firebaseui.auth.AuthUI(auth);
 class Login extends Component {
   constructor(props) {
     super(props);
-    
-    auth.signInAnonymously().then(() => {
-      this.redirectBack();
-    });
 
     auth.onAuthStateChanged(next => {
       if (next) {
@@ -24,7 +20,7 @@ class Login extends Component {
   redirectBack = () => {
     try {
       this.props.history.push(this.props.location.state.from);
-    } catch(e) {
+    } catch (e) {
       this.props.history.push('/host');
     }
   };
@@ -60,8 +56,7 @@ class Login extends Component {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center'
-        }}
-      >
+        }}>
         <h4>Sign in required</h4>
         <div id="firebaseui-auth" />
       </div>
