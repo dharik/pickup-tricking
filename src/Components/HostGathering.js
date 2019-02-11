@@ -98,7 +98,10 @@ class HostGathering extends Component {
             selectedLocation: {
               lat: event.latLng.lat(),
               lng: event.latLng.lng()
-            }
+            },
+            title: '',
+            url: '',
+            placeId: null
           })
         }
       />
