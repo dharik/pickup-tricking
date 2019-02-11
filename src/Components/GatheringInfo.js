@@ -3,10 +3,6 @@ import { ExternalLink, Navigation } from 'react-feather';
 import './GatheringInfo.css';
 
 const GatheringInfo = ({ marker }) => {
-  if (!marker) {
-    return null;
-  }
-
   let frequencyText = '';
   if (marker.frequency === 'once') {
     const d = new Date(marker.date);

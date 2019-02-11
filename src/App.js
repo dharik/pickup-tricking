@@ -7,12 +7,13 @@ import Login from './Components/Login';
 import About from './Components/About';
 import './App.css';
 
+const DEFAULT_MAP_CENTER = { lat: 31.8610858, lng: -122.2695871 };
 class App extends Component {
   state = {
-    center: { lat: 31.8610858, lng: -122.2695871 },
-    userCenter: { lat: 31.8610858, lng: -122.2695871 },
-    userCenterChanged: false,
-    requestingLocation: true
+    userLocation: null,
+    requestingUserLocation: true,
+    mapCenter: DEFAULT_MAP_CENTER,
+    mapTouched: false
   };
 
   componentDidMount() {
@@ -20,29 +21,41 @@ class App extends Component {
       window.navigator.geolocation.getCurrentPosition(
         p => {
           // Got geolocation
-          this.setState({
-            center: { lat: p.coords.latitude, lng: p.coords.longitude },
-            requestingLocation: false
-          });
+          const loc = { lat: p.coords.latitude, lng: p.coords.longitude };
+
+          // Keep the user location but only move the map if the
+          // user hasn't interacted with it yet
+          if (this.state.mapTouched) {
+            this.setState({
+              userLocation: loc,
+              requestingUserLocation: false
+            });
+          } else {
+            this.setState({
+              userLocation: loc,
+              mapCenter: loc,
+              requestingUserLocation: false
+            });
+          }
         },
         e => {
           // User probably rejected
           this.setState({
-            requestingLocation: false
+            requestingUserLocation: false
           });
         }
       );
     } else {
       this.setState({
-        requestingLocation: false
+        requestingUserLocation: false
       });
     }
   }
 
   onBoundsChanged = newCenter => {
     this.setState({
-      userCenter: newCenter,
-      userCenterChanged: true
+      mapCenter: newCenter,
+      mapTouched: true
     });
   };
 
@@ -53,25 +66,15 @@ class App extends Component {
           <Switch>
             <Route path="/about" component={About} />
             <Route path="/login" component={Login} />
-            <Route
-              path="/host"
-              render={() => (
-                <HostGathering
-                  center={this.state.userCenterChanged ? this.state.userCenter : this.state.center}
-                />
-              )}
-            />
+            <Route path="/host" render={() => <HostGathering center={this.state.mapCenter} />} />
             <Route path="/mine" component={ManageGatherings} />
             <Route
               render={() => (
-                <Browse
-                  center={this.state.userCenterChanged ? this.state.userCenter : this.state.center}
-                  onBoundsChanged={this.onBoundsChanged}
-                />
+                <Browse center={this.state.mapCenter} onBoundsChanged={this.onBoundsChanged} />
               )}
             />
           </Switch>
-          {this.state.requestingLocation && (
+          {this.state.requestingUserLocation && (
             <div className="requesting-location">Getting your location...</div>
           )}
         </React.Fragment>

@@ -84,12 +84,8 @@ class HostGathering extends Component {
       <HostGatheringMap
         containerElement={<div style={{ height: '40vh', width: '100%' }} />}
         mapElement={<div style={{ height: '100%', width: '100%' }} />}
-        center={
-          this.state.selectedLocationHasChanged ? this.state.selectedLocation : this.props.center
-        }
-        marker={
-          this.state.selectedLocationHasChanged ? this.state.selectedLocation : this.props.center
-        }
+        center={this.state.selectedLocation}
+        marker={this.state.selectedLocation}
         onPlacesChanged={() => this.searchPlaces()}
         onSearchBoxMounted={box => (this._searchBox = box)}
         onMapClick={event =>
@@ -125,10 +121,6 @@ class HostGathering extends Component {
         placeId: loc.place_id
       });
     }
-  }
-
-  selectLocation({ x, y, lat, lng, event }) {
-    console.info('Selected', lat, lng);
   }
 
   stepTwo() {
@@ -190,14 +182,11 @@ class HostGathering extends Component {
   };
 
   stepThree() {
-    let contactPlaceholder;
-    if (this.state.contactType === 'instagram') {
-      contactPlaceholder = 'Instagram handle';
-    } else if (this.state.contactType === 'facebook') {
-      contactPlaceholder = 'Facebook name';
-    } else if (this.state.contactType === 'email') {
-      contactPlaceholder = 'Email address';
-    }
+    const CONTACT_PLACEHOLDER = {
+      instagram: 'Instagram handle',
+      facebook: 'Facebook name',
+      email: 'Email address'
+    };
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', padding: '5px' }}>
@@ -235,7 +224,7 @@ class HostGathering extends Component {
             type="text"
             value={this.state.contactInfo}
             onChange={event => this.setState({ contactInfo: event.target.value })}
-            placeholder={contactPlaceholder}
+            placeholder={CONTACT_PLACEHOLDER[this.state.contactType]}
           />
         </label>
 

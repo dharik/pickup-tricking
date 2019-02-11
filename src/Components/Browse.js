@@ -19,24 +19,6 @@ export default class Browse extends Component {
     this.gatherData();
   }
 
-  gatherData() {
-    db.ref('gatherings')
-      .once('value')
-      .then(gatherings => {
-        let r = [];
-        gatherings.forEach(gathering => {
-          r.push(gathering.val());
-        });
-
-        this.setState({
-          gatherings: r
-        });
-      })
-      .catch(f => {
-        console.error(f);
-      });
-  }
-
   componentWillReceiveProps(nextProps) {
     if (
       !this.state.mapHasBeenDragged &&
@@ -74,10 +56,6 @@ export default class Browse extends Component {
   }
 
   handleBoundsChanged = () => {
-    if (!this.map) {
-      return;
-    }
-
     this.setState({
       mapHasBeenDragged: true
     });
@@ -95,4 +73,22 @@ export default class Browse extends Component {
     this.setState({ selectedMarker: null });
     this.forceUpdate();
   };
+
+  gatherData() {
+    db.ref('gatherings')
+      .once('value')
+      .then(gatherings => {
+        let r = [];
+        gatherings.forEach(gathering => {
+          r.push(gathering.val());
+        });
+
+        this.setState({
+          gatherings: r
+        });
+      })
+      .catch(f => {
+        console.error(f);
+      });
+  }
 }
