@@ -30,7 +30,7 @@ class HostGathering extends Component {
       lat: this.props.center.lat,
       lng: this.props.center.lng
     },
-    selectedLocationHasChanged: false,
+    selectedLocationTouched: false,
     title: '',
     url: '',
     description: '',
@@ -72,7 +72,7 @@ class HostGathering extends Component {
           Finish <ChevronRight />
         </button>
         <Prompt
-          when={this.state.selectedLocationHasChanged && !this.state.done}
+          when={this.state.selectedLocationTouched && !this.state.done}
           message="Are you sure you want to navigate away from this page? You will lose any form progress"
         />
       </div>
@@ -90,7 +90,7 @@ class HostGathering extends Component {
         onSearchBoxMounted={box => (this._searchBox = box)}
         onMapClick={event =>
           this.setState({
-            selectedLocationHasChanged: true,
+            selectedLocationTouched: true,
             selectedLocation: {
               lat: event.latLng.lat(),
               lng: event.latLng.lng()
@@ -111,7 +111,7 @@ class HostGathering extends Component {
       console.info(loc);
 
       this.setState({
-        selectedLocationHasChanged: true,
+        selectedLocationTouched: true,
         selectedLocation: {
           lat: loc.geometry.location.lat(),
           lng: loc.geometry.location.lng()
@@ -281,7 +281,7 @@ class HostGathering extends Component {
       errors.push('Please select which days of the week you meet');
     }
 
-    if (!this.state.selectedLocationHasChanged) {
+    if (!this.state.selectedLocationTouched) {
       errors.push('Select a location');
     }
 
