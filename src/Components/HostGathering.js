@@ -7,6 +7,7 @@ import SearchBox from 'react-google-maps/lib/components/places/SearchBox';
 import { ChevronRight, Check } from 'react-feather';
 import { produce } from 'immer';
 import './HostGathering.scss';
+import * as yup from 'yup';
 
 const WEEK_DAYS = [
   'Sundays',
@@ -273,79 +274,83 @@ class HostGathering extends Component {
       </div>
     );
   }
+  gatheringSchema = yup.object().shape({
+    // step 1: map
+    selectedLocationTouched: yup.boolean().oneOf([true], 'Select a location on the map'),
+    selectedLocation: yup
+      .object()
+      .shape({
+        lat: yup.number().required(),
+        lng: yup.number().required()
+      })
+      .required('Please select a location on the map'),
+    placeId: yup
+      .string()
+      .nullable()
+      .notRequired(),
+
+    // step 2: when
+    frequency: yup.string().oneOf(['weekly', 'other']),
+    weekly_days: yup.mixed().when('frequency', {
+      is: frequency => frequency === 'weekly',
+      then: yup.array().required('Please select which days of the week you meet')
+    }),
+
+    // step 3: info
+    title: yup
+      .string()
+      .trim()
+      .min(3, 'Enter a title'),
+    url: yup
+      .string()
+      .ensure()
+      .trim(),
+    contactType: yup.string().oneOf(['facebook', 'instagram', 'email']),
+    contactInfo: yup
+      .string()
+      .ensure()
+      .trim(),
+    description: yup
+      .string()
+      .trim()
+      .min(6, 'Enter something useful in the description'),
+
+    // Properties
+    isSpringFloor: yup.boolean().default(false),
+    isGrass: yup.boolean().default(false),
+    hasCrashPads: yup.boolean().default(false),
+    isFree: yup.boolean().default(false),
+
+    // misc admin & reporting
+    uid: yup
+      .string()
+      .default(() => auth.currentUser.uid)
+      .required(),
+    created: yup
+      .number()
+      .default(() => new Date().getTime())
+      .required()
+  });
 
   finish = () => {
-    let errors = [];
-
-    if (this.state.frequency === 'weekly' && this.state.weekly_days.length === 0) {
-      errors.push('Please select which days of the week you meet');
-    }
-
-    if (!this.state.selectedLocationTouched) {
-      errors.push('Select a location');
-    }
-
-    if (this.state.title === '') {
-      errors.push('Enter a title');
-    }
-
-    if (this.state.description.length < 7) {
-      errors.push('Enter something useful in the description');
-    }
-
-    if (errors.length > 0) {
-      alert(errors.join('\n'));
-    } else {
-      const {
-        isSpringFloor,
-        isGrass,
-        hasCrashPads,
-        isFree,
-        frequency,
-        weekly_days,
-        selectedLocation,
-        title,
-        url,
-        description,
-        placeId,
-        contactInfo,
-        contactType
-      } = this.state;
-      const uid = auth.currentUser.uid;
-
-      db.ref('gatherings').push(
-        {
-          isSpringFloor,
-          isGrass,
-          isFree,
-          hasCrashPads,
-          frequency,
-          weekly_days,
-          selectedLocation,
-          title,
-          url,
-          description,
-          uid,
-          created: new Date().getTime(),
-          placeId,
-          contactInfo,
-          contactType
-        },
-        error => {
+    this.gatheringSchema
+      .validate(this.state, { stripUnknown: true, abortEarly: false })
+      .then(gatheringData => {
+        db.ref('gatherings').push(gatheringData, error => {
           if (error) {
             alert(
               'Something went wrong! Please try again. If the problem persists, email dharik@trick-spot.com and I will get it fixed for you!'
             );
-            console.error(error);
           } else {
-            // It worked
             this.setState({
               done: true
             });
           }
-        }
-      );
-    }
+        });
+      })
+      .catch(error => {
+        alert(error.errors.join('\n'));
+      });
   };
 }
 
