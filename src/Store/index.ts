@@ -1,6 +1,9 @@
-import { createStore, compose } from 'redux';
-import { ActionTypes } from './actions';
+import { createStore, compose, applyMiddleware } from 'redux';
+import { Actions } from './actions';
 import produce from 'immer';
+import createSagaMiddleware from 'redux-saga';
+import fetch_spots from './Sagas/fetch_spots';
+import fetch_user_location from './Sagas/fetch_user_location';
 
 const inititalState = {
   map: {
@@ -15,7 +18,7 @@ const inititalState = {
 
 export type Store = typeof inititalState;
 
-const theBigReducer = produce((state: Store, action: ActionTypes) => {
+const rootReducer = produce((state: Store, action: Actions) => {
   switch (action.type) {
     case 'MAP_DRAGGED':
       state.map.center = action.payload;
@@ -36,11 +39,15 @@ const theBigReducer = produce((state: Store, action: ActionTypes) => {
     case 'USER_LOCATION_NOT_RECEIVED':
       state.user.location.loading = false;
       break;
-    case 'FETCH_SPOTS_SUCCESS':
+    case 'FETCH_SPOTS_SUCCEEDED':
       state.spots = action.payload;
       break;
   }
 }, inititalState);
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-export const store = createStore(theBigReducer, composeEnhancers());
+const sagaMiddleware = createSagaMiddleware();
+export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(sagaMiddleware)));
+
+sagaMiddleware.run(fetch_spots);
+sagaMiddleware.run(fetch_user_location);

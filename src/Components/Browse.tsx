@@ -12,6 +12,7 @@ interface Props {
   spots: Spot[];
   mapHasBeenDragged: boolean;
   onMapDrag: Function;
+  loadSpots: VoidFunction;
 }
 class Browse extends Component<Props> {
   state = {
@@ -19,6 +20,10 @@ class Browse extends Component<Props> {
   };
 
   map = null;
+
+  componentWillMount() {
+    this.props.loadSpots();
+  }
 
   render() {
     return (
@@ -72,6 +77,9 @@ export default connect(
     return {
       onMapDrag(newCoords) {
         dispatch({ type: 'MAP_DRAGGED', payload: newCoords });
+      },
+      loadSpots() {
+        dispatch({ type: 'FETCH_SPOTS_REQUESTED' });
       }
     };
   }
