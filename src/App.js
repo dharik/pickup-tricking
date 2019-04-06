@@ -6,6 +6,8 @@ import Browse from './Components/Browse';
 import Login from './Components/Login';
 import About from './Components/About';
 import './App.css';
+import { Provider } from 'react-redux';
+import { store } from './Store';
 
 const DEFAULT_MAP_CENTER = { lat: 31.8610858, lng: -122.2695871 };
 class App extends Component {
@@ -61,24 +63,26 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
-        <React.Fragment>
-          <Switch>
-            <Route path="/about" component={About} />
-            <Route path="/login" component={Login} />
-            <Route path="/host" render={() => <HostGathering center={this.state.mapCenter} />} />
-            <Route path="/mine" component={ManageGatherings} />
-            <Route
-              render={() => (
-                <Browse center={this.state.mapCenter} onBoundsChanged={this.onBoundsChanged} />
-              )}
-            />
-          </Switch>
-          {this.state.requestingUserLocation && (
-            <div className="requesting-location">Getting your location...</div>
-          )}
-        </React.Fragment>
-      </Router>
+      <Provider store={store}>
+        <Router>
+          <React.Fragment>
+            <Switch>
+              <Route path="/about" component={About} />
+              <Route path="/login" component={Login} />
+              <Route path="/host" render={() => <HostGathering center={this.state.mapCenter} />} />
+              <Route path="/mine" component={ManageGatherings} />
+              <Route
+                render={() => (
+                  <Browse center={this.state.mapCenter} onBoundsChanged={this.onBoundsChanged} />
+                )}
+              />
+            </Switch>
+            {this.state.requestingUserLocation && (
+              <div className="requesting-location">Getting your location...</div>
+            )}
+          </React.Fragment>
+        </Router>
+      </Provider>
     );
   }
 }

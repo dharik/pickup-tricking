@@ -17,9 +17,11 @@
     "react-dom": "^16.4.2",
     "react-feather": "^1.1.1",
     "react-google-maps": "^9.4.5",
+    "react-redux": "^6.0.1",
     "react-router-dom": "^4.1.1",
     "react-scripts": "2.1.1",
     "reactfire": "^1.0.0",
+    "redux": "^4.0.1",
     "typescript": "^3.3.3",
     "yup": "^0.26.10"
   },
@@ -29,7 +31,8 @@
     "@types/react": "^16.8.3",
     "@types/react-dom": "^16.8.2",
     "babel-preset-stage-1": "^6.24.1",
-    "firebase-tools": "^4.1.2"
+    "firebase-tools": "^4.1.2",
+    "redux-devtools": "^3.5.0"
   },
   "scripts": {
     "start": "react-scripts start",
