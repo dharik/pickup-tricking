@@ -1,35 +1,24 @@
 import React, { Component } from 'react';
 
-import { db } from '../firebase';
 import GatheringInfo from './GatheringInfo';
 import MapView from './MapView';
 import About from './About';
+import { connect } from 'react-redux';
+import { Store } from '../Store';
+import { Spot, Coordinates } from '../types';
 
-export default class Browse extends Component {
+interface Props {
+  center: Coordinates;
+  spots: Spot[];
+  mapHasBeenDragged: boolean;
+  onMapDrag: Function;
+}
+class Browse extends Component<Props> {
   state = {
-    center: this.props.center,
-    gatherings: [{}],
-    mapHasBeenDragged: false,
     selectedMarker: null
   };
 
   map = null;
-
-  componentDidMount() {
-    this.gatherData();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (
-      !this.state.mapHasBeenDragged &&
-      (this.props.center.lat !== nextProps.center.lat ||
-        this.props.center.lng !== nextProps.center.lng)
-    ) {
-      this.setState({
-        center: nextProps.center
-      });
-    }
-  }
 
   render() {
     return (
@@ -39,9 +28,9 @@ export default class Browse extends Component {
           mapElement={<div className="map-container" />}
           onMapMounted={map => (this.map = map)}
           onMapClick={this.handleMapClick}
-          center={this.state.center}
+          center={this.props.center}
           onBoundsChanged={this.handleBoundsChanged}
-          markers={this.state.gatherings}
+          markers={this.props.spots}
           onMarkerClick={this.handleMarkerClick}
         />
         <div className={`list-half`}>
@@ -56,15 +45,11 @@ export default class Browse extends Component {
   }
 
   handleBoundsChanged = () => {
-    this.setState({
-      mapHasBeenDragged: true
-    });
-    this.props.onBoundsChanged(this.map.getCenter().toJSON());
+    this.props.onMapDrag(this.map.getCenter().toJSON());
   };
 
   handleMarkerClick = targetMarker => {
     this.setState({
-      center: targetMarker.selectedLocation,
       selectedMarker: targetMarker
     });
   };
@@ -73,22 +58,21 @@ export default class Browse extends Component {
     this.setState({ selectedMarker: null });
     this.forceUpdate();
   };
-
-  gatherData() {
-    db.ref('gatherings')
-      .once('value')
-      .then(gatherings => {
-        let r = [];
-        gatherings.forEach(gathering => {
-          r.push(gathering.val());
-        });
-
-        this.setState({
-          gatherings: r
-        });
-      })
-      .catch(f => {
-        console.error(f);
-      });
-  }
 }
+
+export default connect(
+  (state: Store) => {
+    return {
+      center: state.map.center,
+      spots: state.spots,
+      mapHasBeenDragged: state.map.hasBeenDragged
+    };
+  },
+  dispatch => {
+    return {
+      onMapDrag(newCoords) {
+        dispatch({ type: 'MAP_DRAGGED', payload: newCoords });
+      }
+    };
+  }
+)(Browse);

@@ -8,58 +8,13 @@ import About from './Components/About';
 import './App.css';
 import { Provider } from 'react-redux';
 import { store } from './Store';
+import { db } from './firebase';
 
-const DEFAULT_MAP_CENTER = { lat: 31.8610858, lng: -122.2695871 };
 class App extends Component {
-  state = {
-    userLocation: null,
-    requestingUserLocation: true,
-    mapCenter: DEFAULT_MAP_CENTER,
-    mapTouched: false
-  };
-
   componentDidMount() {
-    if (window.navigator.geolocation) {
-      window.navigator.geolocation.getCurrentPosition(
-        p => {
-          // Got geolocation
-          const loc = { lat: p.coords.latitude, lng: p.coords.longitude };
-
-          // Keep the user location but only move the map if the
-          // user hasn't interacted with it yet
-          if (this.state.mapTouched) {
-            this.setState({
-              userLocation: loc,
-              requestingUserLocation: false
-            });
-          } else {
-            this.setState({
-              userLocation: loc,
-              mapCenter: loc,
-              requestingUserLocation: false
-            });
-          }
-        },
-        e => {
-          // User probably rejected
-          this.setState({
-            requestingUserLocation: false
-          });
-        }
-      );
-    } else {
-      this.setState({
-        requestingUserLocation: false
-      });
-    }
+    this.requestUserLocation();
+    this.loadSpots();
   }
-
-  onBoundsChanged = newCenter => {
-    this.setState({
-      mapCenter: newCenter,
-      mapTouched: true
-    });
-  };
 
   render() {
     return (
@@ -69,22 +24,61 @@ class App extends Component {
             <Switch>
               <Route path="/about" component={About} />
               <Route path="/login" component={Login} />
-              <Route path="/host" render={() => <HostGathering center={this.state.mapCenter} />} />
+              <Route path="/host" render={() => <HostGathering />} />
               <Route path="/mine" component={ManageGatherings} />
-              <Route
-                render={() => (
-                  <Browse center={this.state.mapCenter} onBoundsChanged={this.onBoundsChanged} />
-                )}
-              />
+              <Route render={() => <Browse />} />
             </Switch>
-            {this.state.requestingUserLocation && (
-              <div className="requesting-location">Getting your location...</div>
-            )}
           </React.Fragment>
         </Router>
       </Provider>
     );
   }
+
+  requestUserLocation = () => {
+    if (!window.navigator || !window.navigator.geolocation) {
+      return false;
+    }
+
+    store.dispatch({ type: 'USER_LOCATION_REQUESTED' });
+
+    window.navigator.geolocation.getCurrentPosition(
+      p => {
+        store.dispatch({
+          type: 'USER_LOCATION_RECEIVED',
+          payload: {
+            lat: p.coords.latitude,
+            lng: p.coords.longitude
+          }
+        });
+      },
+      e => {
+        // User probably rejected
+        store.dispatch({ type: 'USER_LOCATION_NOT_RECEIVED' });
+      }
+    );
+  };
+
+  loadSpots = () => {
+    store.dispatch({ type: 'FETCH_SPOTS_STARTED' });
+    db.ref('gatherings')
+      .once('value')
+      .then(gatherings => {
+        let r = [];
+        gatherings.forEach(gathering => {
+          r.push(gathering.val());
+        });
+
+        store.dispatch({ type: 'FETCH_SPOTS_SUCCESS', payload: r });
+
+        this.setState({
+          gatherings: r
+        });
+      })
+      .catch(f => {
+        store.dispatch({ type: 'FETCH_SPOTS_FAILED' });
+        console.error(f);
+      });
+  };
 }
 
 export default App;
