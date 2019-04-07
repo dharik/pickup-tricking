@@ -5,7 +5,7 @@ import ManageGatherings from './Components/ManageGatherings';
 import Browse from './Components/Browse';
 import Login from './Components/Login';
 import About from './Components/About';
-import './App.css';
+import './App.scss';
 import { Provider } from 'react-redux';
 import { store } from './Store';
 
