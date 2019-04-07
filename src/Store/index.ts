@@ -4,6 +4,7 @@ import produce from 'immer';
 import createSagaMiddleware from 'redux-saga';
 import fetch_spots from './Sagas/fetch_spots';
 import fetch_user_location from './Sagas/fetch_user_location';
+import log_user_location from './Sagas/log_user_location';
 
 const inititalState = {
   map: {
@@ -50,4 +51,5 @@ const sagaMiddleware = createSagaMiddleware();
 export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(sagaMiddleware)));
 
 sagaMiddleware.run(fetch_spots);
+sagaMiddleware.run(log_user_location);
 sagaMiddleware.run(fetch_user_location);
