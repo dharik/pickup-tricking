@@ -8,6 +8,8 @@ import { ChevronRight, Check } from 'react-feather';
 import { produce } from 'immer';
 import './HostGathering.scss';
 import * as yup from 'yup';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 const WEEK_DAYS = [
   'Sundays',
@@ -374,4 +376,9 @@ const HostGatheringMap = withGoogleMap(props => (
   </GoogleMap>
 ));
 
-export default withRouter(HostGathering);
+export default compose(
+  withRouter,
+  connect(state => ({
+    center: state.map.center
+  }))
+)(HostGathering);

@@ -1,0 +1,81 @@
+@import 'colors.scss';
+
+body,
+html {
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #131313;
+}
+
+#root {
+  height: 100%;
+}
+
+a {
+  color: #3f6fbb;
+}
+
+.browse-container {
+  display: grid;
+  height: 100%;
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+}
+
+.map-searchbox {
+  border: 1px solid rgb(143, 143, 143);
+  width: 240px;
+  height: 32px;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  outline: none;
+  text-overflow: ellipses;
+}
+
+/* Modal to show information about a spot */
+.spot-info {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  right: 5%;
+  bottom: 5%;
+  transition: 0.7s all;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+@media only screen and (min-width: 900px) {
+  .spot-info {
+    bottom: 5%;
+  }
+}
+
+/* Buttons */
+.about-btn {
+  border-radius: 0.3rem;
+  padding: 0.6rem;
+  margin: 0.3rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: $black-2;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.add-spot-btn {
+  align-self: center;
+  background-color: $springboard-purple;
+  border-radius: 0.3rem;
+  color: white;
+  padding: 0.6rem;
+  text-decoration: none;
+  margin: 0.3rem;
+}

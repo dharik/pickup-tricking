@@ -1,8 +1,8 @@
 import React from 'react';
-import { ExternalLink, Navigation } from 'react-feather';
+import { ExternalLink, Navigation, X } from 'react-feather';
 import './GatheringInfo.css';
 
-const GatheringInfo = ({ marker }) => {
+const GatheringInfo = ({ marker, onClose }) => {
   let frequencyText = '';
   if (marker.frequency === 'once') {
     const d = new Date(marker.date);
@@ -13,6 +13,9 @@ const GatheringInfo = ({ marker }) => {
 
   return (
     <React.Fragment>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <X onClick={onClose} />
+      </div>
       <div className="spot-title">
         {marker.title}{' '}
         {marker.url && (
