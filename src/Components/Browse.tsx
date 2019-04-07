@@ -6,19 +6,21 @@ import About from './About';
 import { connect } from 'react-redux';
 import { Store } from '../Store';
 import { Spot, Coordinates } from '../types';
+import { Link } from 'react-router-dom';
+import { PlusCircle, Info } from 'react-feather';
 
 interface Props {
   center: Coordinates;
   spots: Spot[];
   mapHasBeenDragged: boolean;
   onMapDrag: Function;
+  onMapClick: Function;
+  onMarkerClick: Function;
   loadSpots: VoidFunction;
+  selectedSpot: Spot;
+  onSpotInfoClose: VoidFunction;
 }
 class Browse extends Component<Props> {
-  state = {
-    selectedMarker: null
-  };
-
   map = null;
 
   componentWillMount() {
@@ -38,13 +40,29 @@ class Browse extends Component<Props> {
           markers={this.props.spots}
           onMarkerClick={this.handleMarkerClick}
         />
-        <div className={`list-half`}>
-          {this.state.selectedMarker ? (
-            <GatheringInfo marker={this.state.selectedMarker} />
-          ) : (
-            <About />
-          )}
+        {this.props.selectedSpot && (
+          <div className="spot-info">
+            <GatheringInfo marker={this.props.selectedSpot} onClose={this.props.onSpotInfoClose} />
+          </div>
+        )}
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'row'
+          }}>
+          <Link to="/host" className="add-spot-btn">
+            <PlusCircle style={{ height: '1em', width: '1em' }} /> Add a spot
+          </Link>
         </div>
+        <Link to="about" className="about-btn">
+          <Info style={{ height: '1em', width: '1em' }} />
+        </Link>
       </div>
     );
   }
@@ -54,14 +72,11 @@ class Browse extends Component<Props> {
   };
 
   handleMarkerClick = targetMarker => {
-    this.setState({
-      selectedMarker: targetMarker
-    });
+    this.props.onMarkerClick(targetMarker);
   };
 
   handleMapClick = () => {
-    this.setState({ selectedMarker: null });
-    this.forceUpdate();
+    this.props.onMapClick(this.map.getCenter().toJSON());
   };
 }
 
@@ -70,7 +85,8 @@ export default connect(
     return {
       center: state.map.center,
       spots: state.spots,
-      mapHasBeenDragged: state.map.hasBeenDragged
+      mapHasBeenDragged: state.map.hasBeenDragged,
+      selectedSpot: state.selectedSpot
     };
   },
   dispatch => {
@@ -80,6 +96,15 @@ export default connect(
       },
       loadSpots() {
         dispatch({ type: 'FETCH_SPOTS_REQUESTED' });
+      },
+      onMapClick(newCoords) {
+        dispatch({ type: 'MAP_CLICKED', payload: newCoords });
+      },
+      onMarkerClick(spot) {
+        dispatch({ type: 'SPOT_SELECTED', payload: spot });
+      },
+      onSpotInfoClose() {
+        dispatch({ type: 'SPOT_CLOSED' });
       }
     };
   }

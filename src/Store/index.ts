@@ -14,7 +14,8 @@ const inititalState = {
   user: {
     location: { lat: null, lng: null, loading: false }
   },
-  spots: []
+  spots: [],
+  selectedSpot: null
 };
 
 export type Store = typeof inititalState;
@@ -24,6 +25,14 @@ const rootReducer = produce((state: Store, action: Actions) => {
     case 'MAP_DRAGGED':
       state.map.center = action.payload;
       state.map.hasBeenDragged = true;
+      break;
+    case 'MAP_CLICKED':
+    case 'SPOT_CLOSED':
+      state.selectedSpot = null;
+      break;
+    case 'MAP_MARKER_CLICKED':
+    case 'SPOT_SELECTED':
+      state.selectedSpot = action.payload;
       break;
     case 'USER_LOCATION_REQUESTED':
       state.user.location.loading = true;

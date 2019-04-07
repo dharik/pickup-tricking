@@ -2,6 +2,12 @@ import { Coordinates, Spot } from '../types';
 
 export type Actions =
   | { type: 'MAP_DRAGGED'; payload: Coordinates }
+  | { type: 'MAP_CLICKED'; payload: Coordinates }
+  | { type: 'MAP_MARKER_CLICKED'; payload: Spot }
+
+  //
+  | { type: 'SPOT_SELECTED'; payload: Spot }
+  | { type: 'SPOT_CLOSED' }
 
   // User location
   | { type: 'USER_LOCATION_REQUESTED' }

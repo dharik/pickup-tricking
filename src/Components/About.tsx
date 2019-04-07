@@ -15,7 +15,7 @@ const About = () => {
         to check out.
       </p>
 
-      <Link to="/host" className="add-spot">
+      <Link to="/host" className="add-spot-btn">
         <PlusCircle style={{ height: '1em', width: '1em' }} /> Add a spot
       </Link>
 
